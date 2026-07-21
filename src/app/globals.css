@@ -1,0 +1,62 @@
+@import "tailwindcss";
+
+:root {
+  --background-dark: #070e1b;
+  --background-light: #f8fafc;
+  --foreground-dark: #ffffff;
+  --foreground-light: #0f172a;
+  --primary-yellow: #ffc700;
+  --primary-yellow-hover: #e5b300;
+  --primary-blue: #1658e8;
+  --primary-blue-hover: #1147bf;
+  --navy-card-bg: #0a1329;
+  --navy-card-border: rgba(255, 255, 255, 0.08);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--background-dark);
+  color: var(--foreground-dark);
+  font-family: var(--font-geist-sans), system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  overflow-x: hidden;
+}
+
+/* Custom shadow & card styling */
+.hero-glow-container {
+  background: radial-gradient(circle at 50% 30%, rgba(22, 88, 232, 0.18) 0%, rgba(255, 199, 0, 0.05) 45%, transparent 70%);
+}
+
+.custom-shadow-sm {
+  box-shadow: 0 2px 8px -2px rgba(15, 23, 42, 0.06), 0 1px 4px -1px rgba(15, 23, 42, 0.04);
+}
+
+.custom-shadow-md {
+  box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.08), 0 8px 10px -6px rgba(15, 23, 42, 0.04);
+}
+
+.dark-service-card {
+  background-color: var(--navy-card-bg);
+  border: 1px solid var(--navy-card-border);
+  transition: all 0.25s ease-in-out;
+}
+
+.dark-service-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(255, 199, 0, 0.3);
+  box-shadow: 0 12px 30px -10px rgba(0, 0, 0, 0.5);
+}
+
+.light-service-card {
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  transition: all 0.25s ease-in-out;
+}
+
+.light-service-card:hover {
+  transform: translateY(-2px);
+  border-color: #cbd5e1;
+  box-shadow: 0 8px 20px -6px rgba(15, 23, 42, 0.08);
+}
