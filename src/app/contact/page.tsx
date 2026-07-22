@@ -67,10 +67,11 @@ function ContactContent() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    const form = e.currentTarget; // Capture the form reference synchronously
     setSubmitting(true);
     setSubmitError(null);
 
-    const formData = new FormData(e.currentTarget);
+    const formData = new FormData(form);
     const supabase = createClient();
 
     try {
@@ -109,7 +110,7 @@ function ContactContent() {
       }
 
       setSubmitted(true);
-      e.currentTarget.reset();
+      form.reset(); // Safely reset using captured form element
       setTimeout(() => setSubmitted(false), 5000);
     } catch (err: any) {
       setSubmitError(err.message || 'An error occurred while submitting. Please try again.');
