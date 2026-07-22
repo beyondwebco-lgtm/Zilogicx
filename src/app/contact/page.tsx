@@ -49,11 +49,14 @@ const FacebookIcon = () => (
 );
 
 import { HeaderNav } from '@/components/HeaderNav';
+import { createClient } from '@/utils/supabase/client';
 
 function ContactContent() {
   const searchParams = useSearchParams();
   const [activeTab, setActiveTab] = useState<'general' | 'partner' | 'demo' | 'security'>('general');
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   useEffect(() => {
     const tabParam = searchParams.get('tab');
@@ -62,10 +65,57 @@ function ContactContent() {
     }
   }, [searchParams]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setSubmitted(true);
-    setTimeout(() => setSubmitted(false), 5000);
+    setSubmitting(true);
+    setSubmitError(null);
+
+    const formData = new FormData(e.currentTarget);
+    const supabase = createClient();
+
+    try {
+      if (activeTab === 'partner') {
+        const { error } = await supabase.from('partner_applications').insert({
+          business_name: formData.get('businessName') as string,
+          contact_name: formData.get('contactName') as string,
+          email: formData.get('email') as string,
+          phone: formData.get('phone') as string,
+          business_type: formData.get('businessType') as string,
+          industry: formData.get('industry') as string,
+          monthly_volume: formData.get('monthlyVolume') as string,
+          operating_cities: formData.get('operatingCities') as string,
+          current_provider: (formData.get('currentProvider') as string) || null,
+          website_url: (formData.get('websiteUrl') as string) || null,
+          additional_notes: (formData.get('additionalNotes') as string) || null,
+        });
+
+        if (error) throw error;
+      } else {
+        const { error } = await supabase.from('inquiries').insert({
+          type: activeTab,
+          full_name: formData.get('fullName') as string,
+          email: formData.get('email') as string,
+          phone: (formData.get('phone') as string) || null,
+          company_name: (formData.get('companyName') as string) || null,
+          role: (formData.get('role') as string) || null,
+          industry: (formData.get('industry') as string) || null,
+          monthly_volume: (formData.get('monthlyVolume') as string) || null,
+          preferred_date: formData.get('preferredDate') ? (formData.get('preferredDate') as string) : null,
+          preferred_time: (formData.get('preferredTime') as string) || null,
+          message: (formData.get('message') as string) || (activeTab === 'demo' ? 'Requested Demo' : ''),
+        });
+
+        if (error) throw error;
+      }
+
+      setSubmitted(true);
+      e.currentTarget.reset();
+      setTimeout(() => setSubmitted(false), 5000);
+    } catch (err: any) {
+      setSubmitError(err.message || 'An error occurred while submitting. Please try again.');
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -233,6 +283,13 @@ function ContactContent() {
                   </div>
                 )}
 
+                {submitError && (
+                  <div className="mb-6 p-4 rounded-2xl bg-red-50 border border-red-200 flex items-center gap-3 text-red-800 text-sm font-bold">
+                    <span className="text-red-600 font-extrabold">⚠️</span>
+                    <span>{submitError}</span>
+                  </div>
+                )}
+
                 <form onSubmit={handleSubmit} className="space-y-5">
                   
                   {/* TAB 1: GENERAL INQUIRY */}
@@ -243,6 +300,7 @@ function ContactContent() {
                           <label className="block text-xs font-extrabold text-slate-700 mb-1.5">Full Name *</label>
                           <input 
                             required 
+                            name="fullName"
                             type="text" 
                             placeholder="Priya Sharma" 
                             className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-400/20 text-slate-900 font-medium"
@@ -252,6 +310,7 @@ function ContactContent() {
                           <label className="block text-xs font-extrabold text-slate-700 mb-1.5">Email Address *</label>
                           <input 
                             required 
+                            name="email"
                             type="email" 
                             placeholder="priya@brand.com" 
                             className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-400/20 text-slate-900 font-medium"
@@ -263,6 +322,7 @@ function ContactContent() {
                         <div>
                           <label className="block text-xs font-extrabold text-slate-700 mb-1.5">Phone Number</label>
                           <input 
+                            name="phone"
                             type="tel" 
                             placeholder="+91 98765 43210" 
                             className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-400/20 text-slate-900 font-medium"
@@ -271,6 +331,7 @@ function ContactContent() {
                         <div>
                           <label className="block text-xs font-extrabold text-slate-700 mb-1.5">Company Name</label>
                           <input 
+                            name="companyName"
                             type="text" 
                             placeholder="Your Brand Pvt. Ltd." 
                             className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-400/20 text-slate-900 font-medium"
@@ -281,7 +342,7 @@ function ContactContent() {
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                         <div>
                           <label className="block text-xs font-extrabold text-slate-700 mb-1.5">Inquiry Type *</label>
-                          <select required className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-400/20 text-slate-900 font-medium bg-white">
+                          <select name="inquiryType" required className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-400/20 text-slate-900 font-medium bg-white">
                             <option value="General Inquiry">General Inquiry</option>
                             <option value="Sales Inquiry">Sales Inquiry</option>
                             <option value="Partnership">Partnership</option>
@@ -290,7 +351,7 @@ function ContactContent() {
                         </div>
                         <div>
                           <label className="block text-xs font-extrabold text-slate-700 mb-1.5">Industry</label>
-                          <select className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-400/20 text-slate-900 font-medium bg-white">
+                          <select name="industry" className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-400/20 text-slate-900 font-medium bg-white">
                             <option value="">Select industry</option>
                             <option value="Fashion">Fashion & Lifestyle</option>
                             <option value="Electronics">Electronics & Gadgets</option>
@@ -303,7 +364,7 @@ function ContactContent() {
 
                       <div>
                         <label className="block text-xs font-extrabold text-slate-700 mb-1.5">Monthly Shipment Volume</label>
-                        <select className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-400/20 text-slate-900 font-medium bg-white">
+                        <select name="monthlyVolume" className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-400/20 text-slate-900 font-medium bg-white">
                           <option value="">Select volume</option>
                           <option value="1-500">1 - 500 shipments/month</option>
                           <option value="500-2000">500 - 2,000 shipments/month</option>
@@ -316,6 +377,7 @@ function ContactContent() {
                         <label className="block text-xs font-extrabold text-slate-700 mb-1.5">Message *</label>
                         <textarea 
                           required 
+                          name="message"
                           rows={4} 
                           placeholder="Tell us about your logistics needs..." 
                           className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-400/20 text-slate-900 font-medium resize-none"
@@ -324,9 +386,10 @@ function ContactContent() {
 
                       <button 
                         type="submit" 
-                        className="w-full flex items-center justify-center gap-2 rounded-xl bg-[#FFC700] hover:bg-[#e5b300] py-4 text-base font-extrabold text-black transition-all shadow-lg shadow-yellow-500/20 active:scale-[0.99]"
+                        disabled={submitting}
+                        className="w-full flex items-center justify-center gap-2 rounded-xl bg-[#FFC700] hover:bg-[#e5b300] py-4 text-base font-extrabold text-black transition-all shadow-lg shadow-yellow-500/20 active:scale-[0.99] disabled:opacity-60 disabled:cursor-not-allowed"
                       >
-                        Send Inquiry <ArrowRight className="w-5 h-5 stroke-[2.5]" />
+                        {submitting ? 'Sending...' : 'Send Inquiry'} <ArrowRight className="w-5 h-5 stroke-[2.5]" />
                       </button>
                     </>
                   )}
@@ -339,6 +402,7 @@ function ContactContent() {
                           <label className="block text-xs font-extrabold text-slate-700 mb-1.5">Business Name *</label>
                           <input 
                             required 
+                            name="businessName"
                             type="text" 
                             placeholder="Your Brand Pvt. Ltd." 
                             className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-400/20 text-slate-900 font-medium"
@@ -348,6 +412,7 @@ function ContactContent() {
                           <label className="block text-xs font-extrabold text-slate-700 mb-1.5">Contact Name *</label>
                           <input 
                             required 
+                            name="contactName"
                             type="text" 
                             placeholder="Rahul Mehta" 
                             className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-400/20 text-slate-900 font-medium"
@@ -360,6 +425,7 @@ function ContactContent() {
                           <label className="block text-xs font-extrabold text-slate-700 mb-1.5">Email Address *</label>
                           <input 
                             required 
+                            name="email"
                             type="email" 
                             placeholder="rahul@brand.com" 
                             className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-400/20 text-slate-900 font-medium"
@@ -369,6 +435,7 @@ function ContactContent() {
                           <label className="block text-xs font-extrabold text-slate-700 mb-1.5">Phone Number *</label>
                           <input 
                             required 
+                            name="phone"
                             type="tel" 
                             placeholder="+91 98765 43210" 
                             className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-400/20 text-slate-900 font-medium"
@@ -379,7 +446,7 @@ function ContactContent() {
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                         <div>
                           <label className="block text-xs font-extrabold text-slate-700 mb-1.5">Business Type *</label>
-                          <select required className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-400/20 text-slate-900 font-medium bg-white">
+                          <select name="businessType" required className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-400/20 text-slate-900 font-medium bg-white">
                             <option value="">Select type</option>
                             <option value="Brand">D2C Brand</option>
                             <option value="Retailer">Retail Store / Chain</option>
@@ -389,7 +456,7 @@ function ContactContent() {
                         </div>
                         <div>
                           <label className="block text-xs font-extrabold text-slate-700 mb-1.5">Industry *</label>
-                          <select required className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-400/20 text-slate-900 font-medium bg-white">
+                          <select name="industry" required className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-400/20 text-slate-900 font-medium bg-white">
                             <option value="">Select industry</option>
                             <option value="Fashion">Fashion & Lifestyle</option>
                             <option value="Electronics">Electronics</option>
@@ -402,7 +469,7 @@ function ContactContent() {
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                         <div>
                           <label className="block text-xs font-extrabold text-slate-700 mb-1.5">Monthly Shipment Volume *</label>
-                          <select required className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-400/20 text-slate-900 font-medium bg-white">
+                          <select name="monthlyVolume" required className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-400/20 text-slate-900 font-medium bg-white">
                             <option value="">Select volume</option>
                             <option value="1-500">1 - 500</option>
                             <option value="500-2000">500 - 2,000</option>
@@ -413,6 +480,7 @@ function ContactContent() {
                           <label className="block text-xs font-extrabold text-slate-700 mb-1.5">Operating Cities *</label>
                           <input 
                             required 
+                            name="operatingCities"
                             type="text" 
                             placeholder="Mumbai, Delhi, Bangalore..." 
                             className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-400/20 text-slate-900 font-medium"
@@ -424,6 +492,7 @@ function ContactContent() {
                         <div>
                           <label className="block text-xs font-extrabold text-slate-700 mb-1.5">Current Logistics Provider</label>
                           <input 
+                            name="currentProvider"
                             type="text" 
                             placeholder="Delhivery, Bluedart, etc." 
                             className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-400/20 text-slate-900 font-medium"
@@ -432,6 +501,7 @@ function ContactContent() {
                         <div>
                           <label className="block text-xs font-extrabold text-slate-700 mb-1.5">Website</label>
                           <input 
+                            name="websiteUrl"
                             type="url" 
                             placeholder="https://yourbrand.com" 
                             className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-400/20 text-slate-900 font-medium"
@@ -442,6 +512,7 @@ function ContactContent() {
                       <div>
                         <label className="block text-xs font-extrabold text-slate-700 mb-1.5">Additional Notes</label>
                         <textarea 
+                          name="additionalNotes"
                           rows={4} 
                           placeholder="Any specific requirements or questions..." 
                           className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-400/20 text-slate-900 font-medium resize-none"
@@ -450,9 +521,10 @@ function ContactContent() {
 
                       <button 
                         type="submit" 
-                        className="w-full flex items-center justify-center gap-2 rounded-xl bg-[#FFC700] hover:bg-[#e5b300] py-4 text-base font-extrabold text-black transition-all shadow-lg shadow-yellow-500/20 active:scale-[0.99]"
+                        disabled={submitting}
+                        className="w-full flex items-center justify-center gap-2 rounded-xl bg-[#FFC700] hover:bg-[#e5b300] py-4 text-base font-extrabold text-black transition-all shadow-lg shadow-yellow-500/20 active:scale-[0.99] disabled:opacity-60 disabled:cursor-not-allowed"
                       >
-                        Register as Partner <ArrowRight className="w-5 h-5 stroke-[2.5]" />
+                        {submitting ? 'Registering...' : 'Register as Partner'} <ArrowRight className="w-5 h-5 stroke-[2.5]" />
                       </button>
                     </>
                   )}
@@ -465,6 +537,7 @@ function ContactContent() {
                           <label className="block text-xs font-extrabold text-slate-700 mb-1.5">Full Name *</label>
                           <input 
                             required 
+                            name="fullName"
                             type="text" 
                             placeholder="Ananya Patel" 
                             className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-400/20 text-slate-900 font-medium"
@@ -474,6 +547,7 @@ function ContactContent() {
                           <label className="block text-xs font-extrabold text-slate-700 mb-1.5">Email Address *</label>
                           <input 
                             required 
+                            name="email"
                             type="email" 
                             placeholder="ananya@brand.com" 
                             className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-400/20 text-slate-900 font-medium"
@@ -486,6 +560,7 @@ function ContactContent() {
                           <label className="block text-xs font-extrabold text-slate-700 mb-1.5">Phone Number *</label>
                           <input 
                             required 
+                            name="phone"
                             type="tel" 
                             placeholder="+91 98765 43210" 
                             className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-400/20 text-slate-900 font-medium"
@@ -495,6 +570,7 @@ function ContactContent() {
                           <label className="block text-xs font-extrabold text-slate-700 mb-1.5">Company Name *</label>
                           <input 
                             required 
+                            name="companyName"
                             type="text" 
                             placeholder="Your Brand Pvt. Ltd." 
                             className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-400/20 text-slate-900 font-medium"
@@ -507,6 +583,7 @@ function ContactContent() {
                           <label className="block text-xs font-extrabold text-slate-700 mb-1.5">Your Role *</label>
                           <input 
                             required 
+                            name="role"
                             type="text" 
                             placeholder="Head of Operations" 
                             className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-400/20 text-slate-900 font-medium"
@@ -514,7 +591,7 @@ function ContactContent() {
                         </div>
                         <div>
                           <label className="block text-xs font-extrabold text-slate-700 mb-1.5">Industry *</label>
-                          <select required className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-400/20 text-slate-900 font-medium bg-white">
+                          <select name="industry" required className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-400/20 text-slate-900 font-medium bg-white">
                             <option value="">Select industry</option>
                             <option value="Fashion">Fashion & Lifestyle</option>
                             <option value="Electronics">Electronics</option>
@@ -525,7 +602,7 @@ function ContactContent() {
 
                       <div>
                         <label className="block text-xs font-extrabold text-slate-700 mb-1.5">Monthly Shipment Volume *</label>
-                        <select required className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-400/20 text-slate-900 font-medium bg-white">
+                        <select name="monthlyVolume" required className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-400/20 text-slate-900 font-medium bg-white">
                           <option value="">Select volume</option>
                           <option value="1-500">1 - 500</option>
                           <option value="500-2000">500 - 2,000</option>
@@ -537,13 +614,14 @@ function ContactContent() {
                         <div>
                           <label className="block text-xs font-extrabold text-slate-700 mb-1.5">Preferred Date</label>
                           <input 
+                            name="preferredDate"
                             type="date" 
                             className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-400/20 text-slate-900 font-medium"
                           />
                         </div>
                         <div>
                           <label className="block text-xs font-extrabold text-slate-700 mb-1.5">Preferred Time</label>
-                          <select className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-400/20 text-slate-900 font-medium bg-white">
+                          <select name="preferredTime" className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-400/20 text-slate-900 font-medium bg-white">
                             <option value="">Select time slot</option>
                             <option value="Morning">10:00 AM - 1:00 PM IST</option>
                             <option value="Afternoon">2:00 PM - 5:00 PM IST</option>
@@ -554,9 +632,10 @@ function ContactContent() {
 
                       <button 
                         type="submit" 
-                        className="w-full flex items-center justify-center gap-2 rounded-xl bg-[#FFC700] hover:bg-[#e5b300] py-4 text-base font-extrabold text-black transition-all shadow-lg shadow-yellow-500/20 active:scale-[0.99]"
+                        disabled={submitting}
+                        className="w-full flex items-center justify-center gap-2 rounded-xl bg-[#FFC700] hover:bg-[#e5b300] py-4 text-base font-extrabold text-black transition-all shadow-lg shadow-yellow-500/20 active:scale-[0.99] disabled:opacity-60 disabled:cursor-not-allowed"
                       >
-                        Book My Demo <ArrowRight className="w-5 h-5 stroke-[2.5]" />
+                        {submitting ? 'Booking...' : 'Book My Demo'} <ArrowRight className="w-5 h-5 stroke-[2.5]" />
                       </button>
                     </>
                   )}
@@ -569,6 +648,7 @@ function ContactContent() {
                           <label className="block text-xs font-extrabold text-slate-700 mb-1.5">Full Name *</label>
                           <input 
                             required 
+                            name="fullName"
                             type="text" 
                             placeholder="Your Name" 
                             className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-400/20 text-slate-900 font-medium"
@@ -578,6 +658,7 @@ function ContactContent() {
                           <label className="block text-xs font-extrabold text-slate-700 mb-1.5">Email Address *</label>
                           <input 
                             required 
+                            name="email"
                             type="email" 
                             placeholder="you@company.com" 
                             className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-400/20 text-slate-900 font-medium"
@@ -590,6 +671,7 @@ function ContactContent() {
                           <label className="block text-xs font-extrabold text-slate-700 mb-1.5">Company Name *</label>
                           <input 
                             required 
+                            name="companyName"
                             type="text" 
                             placeholder="Company Pvt. Ltd." 
                             className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-400/20 text-slate-900 font-medium"
@@ -598,6 +680,7 @@ function ContactContent() {
                         <div>
                           <label className="block text-xs font-extrabold text-slate-700 mb-1.5">Your Role</label>
                           <input 
+                            name="role"
                             type="text" 
                             placeholder="CISO, CTO, etc." 
                             className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-400/20 text-slate-900 font-medium"
@@ -609,6 +692,7 @@ function ContactContent() {
                         <label className="block text-xs font-extrabold text-slate-700 mb-1.5">Security Question or Requirement *</label>
                         <textarea 
                           required 
+                          name="message"
                           rows={4} 
                           placeholder="Tell us about your security requirements, compliance needs, or specific questions..." 
                           className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-400/20 text-slate-900 font-medium resize-none"
@@ -617,9 +701,10 @@ function ContactContent() {
 
                       <button 
                         type="submit" 
-                        className="w-full flex items-center justify-center gap-2 rounded-xl bg-[#FFC700] hover:bg-[#e5b300] py-4 text-base font-extrabold text-black transition-all shadow-lg shadow-yellow-500/20 active:scale-[0.99]"
+                        disabled={submitting}
+                        className="w-full flex items-center justify-center gap-2 rounded-xl bg-[#FFC700] hover:bg-[#e5b300] py-4 text-base font-extrabold text-black transition-all shadow-lg shadow-yellow-500/20 active:scale-[0.99] disabled:opacity-60 disabled:cursor-not-allowed"
                       >
-                        Contact Security Team <ArrowRight className="w-5 h-5 stroke-[2.5]" />
+                        {submitting ? 'Sending...' : 'Contact Security Team'} <ArrowRight className="w-5 h-5 stroke-[2.5]" />
                       </button>
                     </>
                   )}
