@@ -12,7 +12,7 @@ import { WaveBackground } from '@/components/WaveBackground';
   Zap, 
   ArrowRight,
   CheckCircle2,
-  ShieldCheck
+  Shield
 } from 'lucide-react';
 
 const TwitterXIcon = () => (
@@ -202,7 +202,7 @@ function ContactContent() {
                   { id: 'general', label: 'General', icon: <Mail className="w-4 h-4" /> },
                   { id: 'partner', label: 'Partner', icon: <Users className="w-4 h-4" /> },
                   { id: 'demo', label: 'Demo', icon: <Zap className="w-4 h-4" /> },
-                  { id: 'security', label: 'Security', icon: <ShieldCheck className="w-4 h-4" /> },
+                  { id: 'security', label: 'Security', icon: <Shield className="w-4 h-4" /> },
                 ].map((t) => {
                   const isActive = activeTab === t.id;
                   return (
