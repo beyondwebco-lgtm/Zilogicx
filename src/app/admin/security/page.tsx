@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { ShieldCheck, ShieldAlert, Terminal, Eye, Filter, RefreshCw, Key } from 'lucide-react';
+import { Shield, ShieldAlert, Terminal, Eye, Filter, RefreshCw, Key } from 'lucide-react';
 
 type AuditLog = {
   id: string;
@@ -47,7 +47,7 @@ export default function AdminSecurityPage() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl font-extrabold text-white mb-2 flex items-center gap-3">
-            <ShieldCheck className="w-8 h-8 text-blue-500" /> Security & Audit Logs
+            <Shield className="w-8 h-8 text-blue-500" /> Security & Audit Logs
           </h1>
           <p className="text-slate-400 font-medium">Review real-time access events, security status, and platform audit records.</p>
         </div>
@@ -64,7 +64,7 @@ export default function AdminSecurityPage() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="bg-[#050A15]/80 border border-slate-800 rounded-2xl p-6 shadow-xl flex items-center gap-4">
           <div className="w-12 h-12 rounded-xl bg-green-500/10 border border-green-500/20 text-green-400 flex items-center justify-center">
-            <ShieldCheck className="w-6 h-6" />
+            <Shield className="w-6 h-6" />
           </div>
           <div>
             <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-0.5">Firewall Status</span>

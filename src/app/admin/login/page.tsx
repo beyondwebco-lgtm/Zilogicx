@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/utils/supabase/client';
-import { ShieldCheck, Mail, Lock, ArrowRight, Loader2 } from 'lucide-react';
+import { Shield, Mail, Lock, ArrowRight, Loader2 } from 'lucide-react';
 import { Logo } from '@/components/Logo';
 
 export default function AdminLoginPage() {
@@ -46,7 +46,7 @@ export default function AdminLoginPage() {
             <Logo />
           </div>
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-800/50 border border-slate-700 mb-4">
-            <ShieldCheck className="w-4 h-4 text-[#FFC700]" />
+            <Shield className="w-4 h-4 text-[#FFC700]" />
             <span className="text-xs font-bold text-slate-300 tracking-wider uppercase">Restricted Access</span>
           </div>
           <h1 className="text-3xl font-extrabold text-white mb-2">Admin Portal</h1>
