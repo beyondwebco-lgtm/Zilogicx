@@ -4,7 +4,6 @@ import React, { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Logo } from '@/components/Logo';
 import { WaveBackground } from '@/components/WaveBackground';
-import { 
   Mail, 
   Phone, 
   MapPin, 
@@ -12,7 +11,8 @@ import {
   Users, 
   Zap, 
   ArrowRight,
-  CheckCircle2
+  CheckCircle2,
+  ShieldCheck
 } from 'lucide-react';
 
 const TwitterXIcon = () => (
@@ -51,13 +51,13 @@ import { HeaderNav } from '@/components/HeaderNav';
 
 function ContactContent() {
   const searchParams = useSearchParams();
-  const [activeTab, setActiveTab] = useState<'general' | 'partner' | 'demo'>('general');
+  const [activeTab, setActiveTab] = useState<'general' | 'partner' | 'demo' | 'security'>('general');
   const [submitted, setSubmitted] = useState(false);
 
   useEffect(() => {
     const tabParam = searchParams.get('tab');
-    if (tabParam === 'general' || tabParam === 'partner' || tabParam === 'demo') {
-      setActiveTab(tabParam);
+    if (tabParam === 'general' || tabParam === 'partner' || tabParam === 'demo' || tabParam === 'security') {
+      setActiveTab(tabParam as 'general' | 'partner' | 'demo' | 'security');
     }
   }, [searchParams]);
 
@@ -197,17 +197,18 @@ function ContactContent() {
             <div className="lg:col-span-8 bg-white border border-slate-200 rounded-3xl overflow-hidden shadow-xl">
               
               {/* Tab Navigation Header */}
-              <div className="flex border-b border-slate-200 bg-slate-50/50">
+              <div className="flex flex-wrap border-b border-slate-200 bg-slate-50/50">
                 {[
-                  { id: 'general', label: 'General Inquiry', icon: <Mail className="w-4 h-4" /> },
-                  { id: 'partner', label: 'Become a Partner', icon: <Users className="w-4 h-4" /> },
-                  { id: 'demo', label: 'Request a Demo', icon: <Zap className="w-4 h-4" /> },
+                  { id: 'general', label: 'General', icon: <Mail className="w-4 h-4" /> },
+                  { id: 'partner', label: 'Partner', icon: <Users className="w-4 h-4" /> },
+                  { id: 'demo', label: 'Demo', icon: <Zap className="w-4 h-4" /> },
+                  { id: 'security', label: 'Security', icon: <ShieldCheck className="w-4 h-4" /> },
                 ].map((t) => {
                   const isActive = activeTab === t.id;
                   return (
                     <button
                       key={t.id}
-                      onClick={() => setActiveTab(t.id as 'general' | 'partner' | 'demo')}
+                      onClick={() => setActiveTab(t.id as 'general' | 'partner' | 'demo' | 'security')}
                       className={`flex-1 flex items-center justify-center gap-2 py-4 px-3 text-xs sm:text-sm font-extrabold transition-all relative ${
                         isActive
                           ? 'bg-white text-slate-900 border-t-2 border-t-[#FFC700]'
@@ -555,6 +556,69 @@ function ContactContent() {
                         className="w-full flex items-center justify-center gap-2 rounded-xl bg-[#FFC700] hover:bg-[#e5b300] py-4 text-base font-extrabold text-black transition-all shadow-lg shadow-yellow-500/20 active:scale-[0.99]"
                       >
                         Book My Demo <ArrowRight className="w-5 h-5 stroke-[2.5]" />
+                      </button>
+                    </>
+                  )}
+
+                  {/* TAB 4: SECURITY INQUIRY */}
+                  {activeTab === 'security' && (
+                    <>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                        <div>
+                          <label className="block text-xs font-extrabold text-slate-700 mb-1.5">Full Name *</label>
+                          <input 
+                            required 
+                            type="text" 
+                            placeholder="Your Name" 
+                            className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-400/20 text-slate-900 font-medium"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-extrabold text-slate-700 mb-1.5">Email Address *</label>
+                          <input 
+                            required 
+                            type="email" 
+                            placeholder="you@company.com" 
+                            className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-400/20 text-slate-900 font-medium"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                        <div>
+                          <label className="block text-xs font-extrabold text-slate-700 mb-1.5">Company Name *</label>
+                          <input 
+                            required 
+                            type="text" 
+                            placeholder="Company Pvt. Ltd." 
+                            className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-400/20 text-slate-900 font-medium"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-extrabold text-slate-700 mb-1.5">Your Role</label>
+                          <input 
+                            type="text" 
+                            placeholder="CISO, CTO, etc." 
+                            className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-400/20 text-slate-900 font-medium"
+                          />
+                        </div>
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-extrabold text-slate-700 mb-1.5">Security Question or Requirement *</label>
+                        <textarea 
+                          required 
+                          rows={4} 
+                          placeholder="Tell us about your security requirements, compliance needs, or specific questions..." 
+                          className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-400/20 text-slate-900 font-medium resize-none"
+                        />
+                      </div>
+
+                      <button 
+                        type="submit" 
+                        className="w-full flex items-center justify-center gap-2 rounded-xl bg-[#FFC700] hover:bg-[#e5b300] py-4 text-base font-extrabold text-black transition-all shadow-lg shadow-yellow-500/20 active:scale-[0.99]"
+                      >
+                        Contact Security Team <ArrowRight className="w-5 h-5 stroke-[2.5]" />
                       </button>
                     </>
                   )}

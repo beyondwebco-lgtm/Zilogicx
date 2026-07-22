@@ -340,7 +340,7 @@ export default function TechnologyPage() {
               </p>
 
               <a 
-                href="/contact" 
+                href="/contact?tab=security" 
                 className="inline-flex items-center gap-2 rounded-xl bg-[#1249C7] hover:bg-[#0A2E85] text-white font-extrabold px-6 py-3.5 transition-all shadow-md shadow-blue-600/20 hover:border-[#FFC700] border border-transparent"
               >
                 Talk to Our Security Team <ArrowRight className="w-4 h-4 stroke-[2.5]" />
@@ -440,7 +440,7 @@ export default function TechnologyPage() {
                 <li><a href="/" className="hover:text-white transition-colors">Home</a></li>
                 <li><a href="/about" className="hover:text-white transition-colors">About</a></li>
                 <li><a href="/services" className="hover:text-white transition-colors">Services</a></li>
-                <li><a href="/#contact" className="hover:text-white transition-colors">Careers</a></li>
+                <li><a href="/contact?tab=general" className="hover:text-white transition-colors">Careers</a></li>
               </ul>
             </div>
 
@@ -470,10 +470,10 @@ export default function TechnologyPage() {
             <div>
               <h4 className="text-xs font-extrabold text-[#FFC700] uppercase tracking-wider mb-4 font-mono">LEGAL</h4>
               <ul className="space-y-2.5 text-xs text-slate-300">
-                <li><a href="/#contact" className="hover:text-white transition-colors">Privacy Policy</a></li>
-                <li><a href="/#contact" className="hover:text-white transition-colors">Terms & Conditions</a></li>
-                <li><a href="/#contact" className="hover:text-white transition-colors">Partner Program</a></li>
-                <li><a href="/#contact" className="hover:text-white transition-colors">Contact Sales</a></li>
+                <li><a href="/contact?tab=general" className="hover:text-white transition-colors">Privacy Policy</a></li>
+                <li><a href="/contact?tab=general" className="hover:text-white transition-colors">Terms & Conditions</a></li>
+                <li><a href="/contact?tab=general" className="hover:text-white transition-colors">Partner Program</a></li>
+                <li><a href="/contact?tab=general" className="hover:text-white transition-colors">Contact Sales</a></li>
               </ul>
             </div>
 

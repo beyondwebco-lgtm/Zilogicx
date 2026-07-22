@@ -411,7 +411,7 @@ export default function IndustriesPage() {
 
               {/* Full-Width Yellow CTA Button */}
               <a 
-                href="/#contact" 
+                href="/contact?tab=general" 
                 className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-[#FFC700] hover:bg-[#e5b300] py-4 text-sm font-extrabold text-black transition-all shadow-md shadow-yellow-500/15"
               >
                 Get a Custom Quote for {currentIndustry.name} <ArrowRight className="w-4 h-4 stroke-[2.5]" />
@@ -476,7 +476,7 @@ export default function IndustriesPage() {
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <a 
-              href="/#contact" 
+              href="/contact?tab=general" 
               className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-lg bg-[#FFC700] hover:bg-[#e5b300] px-8 py-4 text-base font-extrabold text-black transition-all shadow-xl shadow-yellow-500/20"
             >
               Get a Custom Quote <ArrowRight className="w-5 h-5 stroke-[2.5]" />
@@ -528,7 +528,7 @@ export default function IndustriesPage() {
                 <li><a href="/" className="hover:text-white transition-colors">Home</a></li>
                 <li><a href="/about" className="hover:text-white transition-colors">About</a></li>
                 <li><a href="/services" className="hover:text-white transition-colors">Services</a></li>
-                <li><a href="/#contact" className="hover:text-white transition-colors">Careers</a></li>
+                <li><a href="/contact?tab=general" className="hover:text-white transition-colors">Careers</a></li>
               </ul>
             </div>
 
@@ -558,10 +558,10 @@ export default function IndustriesPage() {
             <div>
               <h4 className="text-xs font-extrabold text-[#FFC700] uppercase tracking-wider mb-4 font-mono">LEGAL</h4>
               <ul className="space-y-2.5 text-xs text-slate-300">
-                <li><a href="/#contact" className="hover:text-white transition-colors">Privacy Policy</a></li>
-                <li><a href="/#contact" className="hover:text-white transition-colors">Terms & Conditions</a></li>
-                <li><a href="/#contact" className="hover:text-white transition-colors">Partner Program</a></li>
-                <li><a href="/#contact" className="hover:text-white transition-colors">Contact Sales</a></li>
+                <li><a href="/contact?tab=general" className="hover:text-white transition-colors">Privacy Policy</a></li>
+                <li><a href="/contact?tab=general" className="hover:text-white transition-colors">Terms & Conditions</a></li>
+                <li><a href="/contact?tab=general" className="hover:text-white transition-colors">Partner Program</a></li>
+                <li><a href="/contact?tab=general" className="hover:text-white transition-colors">Contact Sales</a></li>
               </ul>
             </div>
 

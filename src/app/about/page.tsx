@@ -442,13 +442,13 @@ export default function AboutPage() {
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <a 
-              href="/#contact" 
+              href="/contact?tab=general" 
               className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-lg bg-[#FFC700] hover:bg-[#e5b300] px-8 py-4 text-base font-extrabold text-black transition-all shadow-xl shadow-yellow-500/20"
             >
               Become a Partner <ArrowRight className="w-5 h-5 stroke-[2.5]" />
             </a>
             <a 
-              href="/#contact" 
+              href="/contact?tab=general" 
               className="w-full sm:w-auto rounded-lg border border-white/40 bg-white/10 hover:bg-white/20 px-8 py-4 text-base font-bold text-white transition-all backdrop-blur-sm"
             >
               Contact Sales
@@ -494,7 +494,7 @@ export default function AboutPage() {
                 <li><a href="/" className="hover:text-white transition-colors">Home</a></li>
                 <li><a href="/about" className="hover:text-white transition-colors">About</a></li>
                 <li><a href="/#ai-tech" className="hover:text-white transition-colors">Technology</a></li>
-                <li><a href="/#contact" className="hover:text-white transition-colors">Careers</a></li>
+                <li><a href="/contact?tab=general" className="hover:text-white transition-colors">Careers</a></li>
               </ul>
             </div>
 
@@ -524,10 +524,10 @@ export default function AboutPage() {
             <div>
               <h4 className="text-xs font-extrabold text-[#FFC700] uppercase tracking-wider mb-4 font-mono">LEGAL</h4>
               <ul className="space-y-2.5 text-xs text-slate-300">
-                <li><a href="/#contact" className="hover:text-white transition-colors">Privacy Policy</a></li>
-                <li><a href="/#contact" className="hover:text-white transition-colors">Terms & Conditions</a></li>
-                <li><a href="/#contact" className="hover:text-white transition-colors">Partner Program</a></li>
-                <li><a href="/#contact" className="hover:text-white transition-colors">Contact Sales</a></li>
+                <li><a href="/contact?tab=general" className="hover:text-white transition-colors">Privacy Policy</a></li>
+                <li><a href="/contact?tab=general" className="hover:text-white transition-colors">Terms & Conditions</a></li>
+                <li><a href="/contact?tab=general" className="hover:text-white transition-colors">Partner Program</a></li>
+                <li><a href="/contact?tab=general" className="hover:text-white transition-colors">Contact Sales</a></li>
               </ul>
             </div>
 

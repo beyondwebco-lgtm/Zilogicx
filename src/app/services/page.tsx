@@ -418,7 +418,7 @@ export default function ServicesPage() {
                 <li><a href="/" className="hover:text-white transition-colors">Home</a></li>
                 <li><a href="/about" className="hover:text-white transition-colors">About</a></li>
                 <li><a href="/services" className="hover:text-white transition-colors">Services</a></li>
-                <li><a href="/#contact" className="hover:text-white transition-colors">Careers</a></li>
+                <li><a href="/contact?tab=general" className="hover:text-white transition-colors">Careers</a></li>
               </ul>
             </div>
 
@@ -448,10 +448,10 @@ export default function ServicesPage() {
             <div>
               <h4 className="text-xs font-extrabold text-[#FFC700] uppercase tracking-wider mb-4 font-mono">LEGAL</h4>
               <ul className="space-y-2.5 text-xs text-slate-300">
-                <li><a href="/#contact" className="hover:text-white transition-colors">Privacy Policy</a></li>
-                <li><a href="/#contact" className="hover:text-white transition-colors">Terms & Conditions</a></li>
-                <li><a href="/#contact" className="hover:text-white transition-colors">Partner Program</a></li>
-                <li><a href="/#contact" className="hover:text-white transition-colors">Contact Sales</a></li>
+                <li><a href="/contact?tab=general" className="hover:text-white transition-colors">Privacy Policy</a></li>
+                <li><a href="/contact?tab=general" className="hover:text-white transition-colors">Terms & Conditions</a></li>
+                <li><a href="/contact?tab=general" className="hover:text-white transition-colors">Partner Program</a></li>
+                <li><a href="/contact?tab=general" className="hover:text-white transition-colors">Contact Sales</a></li>
               </ul>
             </div>
 
