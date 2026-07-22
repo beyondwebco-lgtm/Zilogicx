@@ -359,13 +359,13 @@ export default function ServicesPage() {
 
                 <div className="flex flex-col sm:flex-row items-center gap-4 pt-4 border-t border-slate-100">
                   <a 
-                    href="/#contact" 
+                    href="/contact?tab=general" 
                     className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-lg bg-[#FFC700] hover:bg-[#e5b300] px-7 py-3 text-sm font-extrabold text-black transition-all shadow-md shadow-yellow-500/15"
                   >
                     Get Started <ArrowRight className="w-4 h-4 stroke-[2.5]" />
                   </a>
                   <a 
-                    href="/#contact" 
+                    href="/contact?tab=demo" 
                     className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-lg border border-blue-600 text-blue-600 hover:bg-blue-50 px-7 py-3 text-sm font-bold transition-all"
                   >
                     Request a Demo

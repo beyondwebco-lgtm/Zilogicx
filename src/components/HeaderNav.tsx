@@ -46,7 +46,7 @@ export const HeaderNav: React.FC<HeaderNavProps> = ({ activePage }) => {
 
         {/* CTA Button */}
         <a 
-          href="/contact" 
+          href="/contact?tab=general" 
           className="rounded-lg bg-[#FFC700] hover:bg-[#e5b300] px-5 py-2.5 text-sm font-extrabold text-black transition-all transform active:scale-95 shadow-md shadow-yellow-500/10"
         >
           Get Started
