@@ -4,6 +4,7 @@ import React, { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Logo } from '@/components/Logo';
 import { WaveBackground } from '@/components/WaveBackground';
+import {
   Mail, 
   Phone, 
   MapPin, 
