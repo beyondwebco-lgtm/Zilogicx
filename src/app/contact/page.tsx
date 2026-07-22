@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { Logo } from '@/components/Logo';
 import { WaveBackground } from '@/components/WaveBackground';
 import { 
@@ -49,8 +50,16 @@ const FacebookIcon = () => (
 import { HeaderNav } from '@/components/HeaderNav';
 
 export default function ContactPage() {
+  const searchParams = useSearchParams();
   const [activeTab, setActiveTab] = useState<'general' | 'partner' | 'demo'>('general');
   const [submitted, setSubmitted] = useState(false);
+
+  useEffect(() => {
+    const tabParam = searchParams.get('tab');
+    if (tabParam === 'general' || tabParam === 'partner' || tabParam === 'demo') {
+      setActiveTab(tabParam);
+    }
+  }, [searchParams]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

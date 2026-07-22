@@ -122,19 +122,19 @@ export default function LandingPage() {
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
             <a 
-              href="/contact" 
+              href="/contact?tab=general" 
               className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-md bg-[#FFC700] hover:bg-[#e5b300] px-7 py-3.5 text-base font-extrabold text-black transition-all shadow-lg shadow-yellow-500/20"
             >
               Get Started <ArrowRight className="w-5 h-5 stroke-[2.5]" />
             </a>
             <a 
-              href="/contact" 
+              href="/contact?tab=partner" 
               className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-md border border-slate-700 bg-slate-900/80 hover:bg-slate-800 px-7 py-3.5 text-base font-bold text-white transition-all"
             >
               Partner with ZILOGICX
             </a>
             <a 
-              href="/contact" 
+              href="/contact?tab=general" 
               className="inline-flex items-center gap-1 text-slate-300 hover:text-[#FFC700] transition-colors py-2 text-sm font-semibold"
             >
               Contact Sales <ChevronRight className="w-4 h-4" />
@@ -668,19 +668,19 @@ export default function LandingPage() {
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <a 
-              href="/contact" 
+              href="/contact?tab=partner" 
               className="w-full sm:w-auto rounded-lg bg-[#FFC700] hover:bg-[#e5b300] px-8 py-4 text-base font-extrabold text-black transition-all shadow-xl shadow-yellow-500/20"
             >
               Become a Partner
             </a>
             <a 
-              href="/contact" 
+              href="/contact?tab=general" 
               className="w-full sm:w-auto rounded-lg border border-white/40 bg-white/10 hover:bg-white/20 px-8 py-4 text-base font-bold text-white transition-all backdrop-blur-sm"
             >
               Talk to Sales
             </a>
             <a 
-              href="/contact" 
+              href="/contact?tab=demo" 
               className="inline-flex items-center gap-1.5 text-blue-100 hover:text-white transition-colors py-2 text-sm font-semibold"
             >
               Request a Demo
