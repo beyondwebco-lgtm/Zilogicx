@@ -1,11 +1,10 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Logo } from '@/components/Logo';
 import { HeaderNav } from '@/components/HeaderNav';
 import { WaveBackground } from '@/components/WaveBackground';
 import { AnimatedCounter } from '@/components/AnimatedCounter';
-import { saveMockLead, supabase } from '@/lib/supabase';
 import { 
   ArrowRight, 
   Check, 
@@ -78,33 +77,7 @@ const YoutubeIcon = () => (
 );
 
 export default function LandingPage() {
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    company: '',
-    message: ''
-  });
-  const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
-  const [activeNav, setActiveNav] = useState('Home');
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setStatus('submitting');
-    try {
-      if (supabase) {
-        const { error } = await supabase.from('leads').insert([formData]);
-        if (error) throw error;
-      } else {
-        saveMockLead(formData);
-      }
-      setStatus('success');
-      setFormData({ name: '', email: '', phone: '', company: '', message: '' });
-    } catch (err) {
-      console.error(err);
-      setStatus('error');
-    }
-  };
 
   const navItems = [
     { name: 'Home', href: '/' },
@@ -149,19 +122,19 @@ export default function LandingPage() {
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
             <a 
-              href="#contact" 
+              href="/contact" 
               className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-md bg-[#FFC700] hover:bg-[#e5b300] px-7 py-3.5 text-base font-extrabold text-black transition-all shadow-lg shadow-yellow-500/20"
             >
               Get Started <ArrowRight className="w-5 h-5 stroke-[2.5]" />
             </a>
             <a 
-              href="#contact" 
+              href="/contact" 
               className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-md border border-slate-700 bg-slate-900/80 hover:bg-slate-800 px-7 py-3.5 text-base font-bold text-white transition-all"
             >
               Partner with ZILOGICX
             </a>
             <a 
-              href="#contact" 
+              href="/contact" 
               className="inline-flex items-center gap-1 text-slate-300 hover:text-[#FFC700] transition-colors py-2 text-sm font-semibold"
             >
               Contact Sales <ChevronRight className="w-4 h-4" />
@@ -695,19 +668,19 @@ export default function LandingPage() {
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <a 
-              href="#contact" 
+              href="/contact" 
               className="w-full sm:w-auto rounded-lg bg-[#FFC700] hover:bg-[#e5b300] px-8 py-4 text-base font-extrabold text-black transition-all shadow-xl shadow-yellow-500/20"
             >
               Become a Partner
             </a>
             <a 
-              href="#contact" 
+              href="/contact" 
               className="w-full sm:w-auto rounded-lg border border-white/40 bg-white/10 hover:bg-white/20 px-8 py-4 text-base font-bold text-white transition-all backdrop-blur-sm"
             >
               Talk to Sales
             </a>
             <a 
-              href="#contact" 
+              href="/contact" 
               className="inline-flex items-center gap-1.5 text-blue-100 hover:text-white transition-colors py-2 text-sm font-semibold"
             >
               Request a Demo
@@ -717,114 +690,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ----------------- Partnership / Contact Form Section ----------------- */}
-      <section id="contact" className="py-20 bg-[#070e1b] text-white border-t border-slate-800">
-        <div className="container mx-auto max-w-4xl px-4 sm:px-6">
-          <div className="text-center mb-12">
-            <span className="text-xs font-extrabold tracking-widest text-[#FFC700] uppercase font-mono">
-              PARTNER WITH US
-            </span>
-            <h2 className="text-3xl sm:text-4xl font-extrabold text-white mt-2">
-              Ready to Scale Your Logistics?
-            </h2>
-            <p className="text-slate-400 mt-3 text-base">
-              Fill out the form below, and our onboarding team will contact you within 24 hours.
-            </p>
-          </div>
 
-          <form onSubmit={handleSubmit} className="bg-slate-900/80 border border-slate-800 rounded-2xl p-6 sm:p-10 shadow-2xl space-y-6">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-              <div>
-                <label htmlFor="name" className="block text-sm font-semibold text-slate-300 mb-2">Full Name</label>
-                <input 
-                  type="text" 
-                  id="name"
-                  required
-                  value={formData.name}
-                  onChange={e => setFormData({ ...formData, name: e.target.value })}
-                  placeholder="e.g. Vikramaditya Sharma" 
-                  className="w-full rounded-lg bg-[#070e1b] border border-slate-700 px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-[#FFC700] transition-colors text-sm"
-                />
-              </div>
-              <div>
-                <label htmlFor="email" className="block text-sm font-semibold text-slate-300 mb-2">Work Email</label>
-                <input 
-                  type="email" 
-                  id="email"
-                  required
-                  value={formData.email}
-                  onChange={e => setFormData({ ...formData, email: e.target.value })}
-                  placeholder="e.g. vikram@brand.com" 
-                  className="w-full rounded-lg bg-[#070e1b] border border-slate-700 px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-[#FFC700] transition-colors text-sm"
-                />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-              <div>
-                <label htmlFor="phone" className="block text-sm font-semibold text-slate-300 mb-2">Phone Number</label>
-                <input 
-                  type="tel" 
-                  id="phone"
-                  required
-                  value={formData.phone}
-                  onChange={e => setFormData({ ...formData, phone: e.target.value })}
-                  placeholder="e.g. +91 98765 43210" 
-                  className="w-full rounded-lg bg-[#070e1b] border border-slate-700 px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-[#FFC700] transition-colors text-sm"
-                />
-              </div>
-              <div>
-                <label htmlFor="company" className="block text-sm font-semibold text-slate-300 mb-2">Company Name</label>
-                <input 
-                  type="text" 
-                  id="company"
-                  required
-                  value={formData.company}
-                  onChange={e => setFormData({ ...formData, company: e.target.value })}
-                  placeholder="e.g. D2C Fashion Store" 
-                  className="w-full rounded-lg bg-[#070e1b] border border-slate-700 px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-[#FFC700] transition-colors text-sm"
-                />
-              </div>
-            </div>
-
-            <div>
-              <label htmlFor="message" className="block text-sm font-semibold text-slate-300 mb-2">Requirements / Estimated Order Volume</label>
-              <textarea 
-                id="message"
-                rows={4}
-                value={formData.message}
-                onChange={e => setFormData({ ...formData, message: e.target.value })}
-                placeholder="Share your shipping volume and requirements (e.g., 500 orders/day in Metro cities)..." 
-                className="w-full rounded-lg bg-[#070e1b] border border-slate-700 px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-[#FFC700] transition-colors text-sm"
-              />
-            </div>
-
-            {status === 'success' && (
-              <div className="p-4 bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 rounded-lg text-sm text-center font-medium">
-                ✓ Success! Your request has been received. Our team will contact you within 24 hours.
-              </div>
-            )}
-
-            {status === 'error' && (
-              <div className="p-4 bg-rose-500/15 border border-rose-500/30 text-rose-300 rounded-lg text-sm text-center font-medium">
-                ⚠️ Failed to submit. Please check your inputs and try again.
-              </div>
-            )}
-
-            <button 
-              type="submit" 
-              disabled={status === 'submitting'}
-              className="w-full py-4 bg-[#FFC700] hover:bg-[#e5b300] disabled:bg-slate-700 text-black font-extrabold rounded-lg transition-all flex items-center justify-center gap-2 text-base shadow-lg shadow-yellow-500/15"
-            >
-              {status === 'submitting' ? (
-                'Submitting Request...'
-              ) : (
-                <>Submit Partnership Request <Send className="w-4 h-4 stroke-[2.5]" /></>
-              )}
-            </button>
-          </form>
-        </div>
-      </section>
 
       {/* ----------------- Multi-Column Footer (New Screenshot 3) ----------------- */}
       <footer className="border-t border-slate-800/80 bg-[#060B18] py-16 text-sm text-slate-400">
@@ -863,7 +729,7 @@ export default function LandingPage() {
                 <li><a href="/" className="hover:text-white transition-colors">Home</a></li>
                 <li><a href="/about" className="hover:text-white transition-colors">About</a></li>
                 <li><a href="/#ai-tech" className="hover:text-white transition-colors">Technology</a></li>
-                <li><a href="/#contact" className="hover:text-white transition-colors">Careers</a></li>
+                <li><a href="/contact" className="hover:text-white transition-colors">Careers</a></li>
               </ul>
             </div>
 
@@ -893,10 +759,10 @@ export default function LandingPage() {
             <div>
               <h4 className="text-xs font-extrabold text-[#FFC700] uppercase tracking-wider mb-4 font-mono">LEGAL</h4>
               <ul className="space-y-2.5 text-xs text-slate-300">
-                <li><a href="/#contact" className="hover:text-white transition-colors">Privacy Policy</a></li>
-                <li><a href="/#contact" className="hover:text-white transition-colors">Terms & Conditions</a></li>
-                <li><a href="/#contact" className="hover:text-white transition-colors">Partner Program</a></li>
-                <li><a href="/#contact" className="hover:text-white transition-colors">Contact Sales</a></li>
+                <li><a href="/contact" className="hover:text-white transition-colors">Privacy Policy</a></li>
+                <li><a href="/contact" className="hover:text-white transition-colors">Terms & Conditions</a></li>
+                <li><a href="/contact" className="hover:text-white transition-colors">Partner Program</a></li>
+                <li><a href="/contact" className="hover:text-white transition-colors">Contact Sales</a></li>
               </ul>
             </div>
 
