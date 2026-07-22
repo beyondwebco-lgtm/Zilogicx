@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Logo } from '@/components/Logo';
 import { WaveBackground } from '@/components/WaveBackground';
@@ -49,7 +49,7 @@ const FacebookIcon = () => (
 
 import { HeaderNav } from '@/components/HeaderNav';
 
-export default function ContactPage() {
+function ContactContent() {
   const searchParams = useSearchParams();
   const [activeTab, setActiveTab] = useState<'general' | 'partner' | 'demo'>('general');
   const [submitted, setSubmitted] = useState(false);
@@ -656,3 +656,12 @@ export default function ContactPage() {
     </div>
   );
 }
+
+export default function ContactPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-[#070e1b] flex items-center justify-center text-white">Loading...</div>}>
+      <ContactContent />
+    </Suspense>
+  );
+}
+
