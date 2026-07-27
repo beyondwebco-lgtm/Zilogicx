@@ -43,7 +43,7 @@ function AdminLayoutInner({ children }: { children: React.ReactNode }) {
     const labels: Record<string, string> = {
       general: 'General Inquiries',
       demo: 'Demo Requests',
-      security: 'Security Issues',
+      security: 'Security Inquiries',
       d2c: 'D2C / E-commerce',
       retail: 'Retail Inquiries'
     };

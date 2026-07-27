@@ -47,7 +47,7 @@ export default function AdminLoginPage() {
           </div>
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-800/50 border border-slate-700 mb-4">
             <Shield className="w-4 h-4 text-[#FFC700]" />
-            <span className="text-xs font-bold text-slate-300 tracking-wider uppercase">Restricted Access</span>
+            <span className="text-xs font-bold text-slate-300 tracking-wider uppercase">Admin Portal Sign In</span>
           </div>
           <h1 className="text-3xl font-extrabold text-white mb-2">Admin Portal</h1>
           <p className="text-slate-400 font-medium">Log in to manage operations and platforms.</p>

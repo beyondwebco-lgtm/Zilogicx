@@ -17,7 +17,7 @@ const initialLogs: AuditLog[] = [
   { id: 'LOG-992', time: '2026-07-22 20:14:12', user: 'system_daemon', event: 'Database Connection Established', severity: 'Low', ipAddress: 'localhost' },
   { id: 'LOG-993', time: '2026-07-22 20:08:44', user: 'admin@123gmail.com', event: 'Session Initialization Attempt Failed (Wrong URL Configuration)', severity: 'Medium', ipAddress: '192.168.1.33' },
   { id: 'LOG-994', time: '2026-07-22 18:34:01', user: 'system_daemon', event: 'RLS Policies Executed on inquiries Table', severity: 'Low', ipAddress: 'localhost' },
-  { id: 'LOG-995', time: '2026-07-22 18:22:15', user: 'unauthenticated_user', event: 'Unauthorized Access Intercepted on /admin', severity: 'Critical', ipAddress: '223.189.14.92' },
+  { id: 'LOG-995', time: '2026-07-22 18:22:15', user: 'system_daemon', event: 'Security Policy Synchronization Complete', severity: 'Low', ipAddress: 'localhost' },
 ];
 
 export default function AdminSecurityPage() {
