@@ -1,48 +1,51 @@
 import React from 'react';
+import Link from 'next/link';
 
 interface LogoProps {
   className?: string;
   variant?: 'dark' | 'light' | 'white-bg';
+  href?: string;
 }
 
-export const Logo: React.FC<LogoProps> = ({ className = '', variant = 'dark' }) => {
+export const Logo: React.FC<LogoProps> = ({ className = '', variant = 'dark', href = '/' }) => {
   // On dark backgrounds, ilogic text and doorstep line can be white/light or rendered inside a crisp container
   const textColor = variant === 'light' ? '#0B1E48' : variant === 'white-bg' ? '#0B1E48' : '#FFFFFF';
   
   if (variant === 'white-bg') {
     return (
-      <a href="#home" className={`inline-flex items-center bg-white px-3 py-1.5 rounded-lg shadow-md border border-slate-100 hover:shadow-lg transition-all ${className}`}>
+      <Link href={href} className={`inline-flex items-center bg-white px-3 py-1.5 rounded-lg shadow-md border border-slate-100 hover:shadow-lg transition-all ${className}`}>
         <LogoSvg textColor="#0B1E48" />
-      </a>
+      </Link>
     );
   }
 
   return (
-    <a href="#home" className={`inline-flex items-center select-none hover:opacity-95 transition-opacity ${className}`}>
+    <Link href={href} className={`inline-flex items-center select-none hover:opacity-95 transition-opacity ${className}`}>
       <LogoSvg textColor={textColor} />
-    </a>
+    </Link>
   );
 };
 
 const LogoSvg: React.FC<{ textColor: string }> = ({ textColor }) => (
   <svg 
-    viewBox="0 0 250 72" 
+    viewBox="0 0 250 78" 
     fill="none" 
     xmlns="http://www.w3.org/2000/svg" 
     className="h-10 sm:h-11 w-auto"
   >
     {/* Speed Trails behind Z */}
-    <g fill="#F5B800">
-      <path d="M 2 18 L 32 18 L 28 20.5 L 2 20.5 Z" opacity="0.9" />
-      <path d="M -6 24.5 L 26 24.5 L 22 27 L -6 27 Z" opacity="0.8" />
-      <path d="M -14 31 L 20 31 L 16 33.5 L -14 33.5 Z" opacity="0.7" />
-    </g>
+    <g transform="translate(4, -1)">
+      <path d="M -4 16 H 24 L 21 20 H -4 Z" fill="#F5B800" />
+      <path d="M -4 24 H 19 L 16 28 H -4 Z" fill="#F5B800" />
+      <path d="M -4 32 H 14 L 11 36 H -4 Z" fill="#F5B800" />
 
-    {/* Stylized Speed Z */}
-    <path 
-      d="M 24 13 L 64 13 L 34 41 L 64 41 L 61 47 L 17 47 L 46 19 L 24 19 Z" 
-      fill="#F5B800" 
-    />
+      {/* Main Z */}
+      <path d="M 24 8 H 64 L 34 44 H 74 L 70 52 H 18 L 48 16 H 20 Z" fill="#F5B800" />
+      
+      {/* Arrow under Z */}
+      <path d="M 8 58 H 55" stroke="#94a3b8" strokeWidth="1.5" fill="none" strokeOpacity="0.6" />
+      <path d="M 55 55 L 61 58 L 55 61 Z" fill="#F5B800" />
+    </g>
 
     {/* ilogic Text */}
     <text 
@@ -70,13 +73,13 @@ const LogoSvg: React.FC<{ textColor: string }> = ({ textColor }) => (
     </text>
 
     {/* Subtitle Decorative Left Line & Arrow */}
-    <line x1="8" y1="62" x2="52" y2="62" stroke={textColor} strokeWidth="1.5" strokeOpacity="0.8" />
-    <polygon points="57,62 50,59 50,65" fill="#F5B800" />
+    <line x1="8" y1="67" x2="52" y2="67" stroke={textColor} strokeWidth="1.5" strokeOpacity="0.8" />
+    <polygon points="57,67 50,64 50,70" fill="#F5B800" />
 
     {/* Subtitle Text */}
     <text 
       x="62" 
-      y="66" 
+      y="71" 
       fontFamily="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" 
       fontWeight="800" 
       fontSize="12.5" 
@@ -87,7 +90,7 @@ const LogoSvg: React.FC<{ textColor: string }> = ({ textColor }) => (
     </text>
 
     {/* Subtitle Decorative Right Line & Arrow */}
-    <polygon points="185,62 192,59 192,65" fill="#F5B800" />
-    <line x1="197" y1="62" x2="242" y2="62" stroke={textColor} strokeWidth="1.5" strokeOpacity="0.8" />
+    <polygon points="185,67 192,64 192,70" fill="#F5B800" />
+    <line x1="197" y1="67" x2="242" y2="67" stroke={textColor} strokeWidth="1.5" strokeOpacity="0.8" />
   </svg>
 );

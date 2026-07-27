@@ -4,7 +4,7 @@ import React from 'react';
 import { Logo } from '@/components/Logo';
 
 interface HeaderNavProps {
-  activePage: 'Home' | 'About' | 'Services' | 'Industries' | 'Technology' | 'Partners' | 'Contact';
+  activePage: 'Home' | 'About' | 'Services' | 'Industries' | 'Technology' | 'Partners' | 'Contact' | 'terms';
 }
 
 export const HeaderNav: React.FC<HeaderNavProps> = ({ activePage }) => {

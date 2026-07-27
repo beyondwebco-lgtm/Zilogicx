@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <!-- Dark background (optional for favicon, but Next.js usually likes transparent, let's keep transparent) -->
+  
+  <g transform="translate(15, 20) scale(0.9)">
+    <!-- Speed Lines -->
+    <path d="M0 10 H30 L27 15 H0 Z" fill="#FFC700" />
+    <path d="M0 20 H25 L22 25 H0 Z" fill="#FFC700" />
+    <path d="M0 30 H20 L17 35 H0 Z" fill="#FFC700" />
+
+    <!-- Main Z -->
+    <path d="M30 0 H80 L40 45 H90 L85 55 H20 L60 10 H25 Z" fill="#FFC700" />
+    
+    <!-- Arrow Line Underneath -->
+    <path d="M10 65 H70" stroke="#888888" strokeWidth="2" fill="none" />
+    <!-- Arrowhead -->
+    <path d="M70 60 L80 65 L70 70 Z" fill="#FFC700" />
+  </g>
+</svg>

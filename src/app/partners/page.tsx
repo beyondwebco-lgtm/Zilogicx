@@ -557,13 +557,11 @@ export default function PartnersPage() {
               </div>
               <div className="flex items-center gap-2 pt-2">
                 {[
-                  { icon: <LinkedinIcon />, label: 'LinkedIn' },
-                  { icon: <TwitterXIcon />, label: 'X' },
-                  { icon: <InstagramIcon />, label: 'Instagram' },
-                  { icon: <FacebookIcon />, label: 'Facebook' },
-                  { icon: <YoutubeIcon />, label: 'YouTube' },
+                  { icon: <LinkedinIcon />, label: 'LinkedIn', href: 'https://www.linkedin.com/company/135278550/admin/dashboard/' },
+                  { icon: <InstagramIcon />, label: 'Instagram', href: 'https://www.instagram.com/zilogicx_official?igsh=MTFiY2VheTJrZGRnMA==' },
+                  { icon: <YoutubeIcon />, label: 'YouTube', href: 'https://youtube.com/@zilogicx?si=KLGr5ywbtZfcpmT6' },
                 ].map((s, idx) => (
-                  <a key={idx} href="/" className="p-2 rounded-lg bg-slate-900 border border-slate-800 text-slate-400 hover:text-[#FFC700] hover:border-yellow-500/30 transition-colors">
+                  <a key={idx} href={s.href} target="_blank" rel="noopener noreferrer" className="p-2 rounded-lg bg-slate-900 border border-slate-800 text-slate-400 hover:text-[#FFC700] hover:border-yellow-500/30 transition-colors">
                     {s.icon}
                   </a>
                 ))}
@@ -608,7 +606,7 @@ export default function PartnersPage() {
               <h4 className="text-xs font-extrabold text-[#FFC700] uppercase tracking-wider mb-4 font-mono">LEGAL</h4>
               <ul className="space-y-2.5 text-xs text-slate-300">
                 <li><a href="/contact?tab=general" className="hover:text-white transition-colors">Privacy Policy</a></li>
-                <li><a href="/contact?tab=general" className="hover:text-white transition-colors">Terms & Conditions</a></li>
+                <li><a href="/terms" className="hover:text-white transition-colors">Terms & Conditions</a></li>
                 <li><a href="/partners" className="hover:text-white transition-colors">Partner Program</a></li>
                 <li><a href="/contact?tab=general" className="hover:text-white transition-colors">Contact Sales</a></li>
               </ul>

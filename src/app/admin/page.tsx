@@ -64,12 +64,37 @@ export default function AdminDashboardPage() {
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
       
       {/* Welcome Banner */}
-      <div className="rounded-3xl bg-gradient-to-r from-blue-600 to-blue-800 p-8 text-white shadow-xl relative overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(255,255,255,0.1),transparent)]"></div>
-        <h1 className="text-3xl font-black mb-2">Welcome to Zilogicx Admin Control</h1>
-        <p className="text-blue-100 font-medium text-sm max-w-xl">
-          Monitor your logistics ecosystem, manage retail partner onboarding requests, and review general inquiries.
-        </p>
+      <div className="relative rounded-3xl bg-gradient-to-br from-[#060B18] via-[#0A132A] to-[#12224A] p-6 md:p-8 border border-slate-800/60 shadow-[0_20px_50px_rgba(0,0,0,0.5)] overflow-hidden group">
+        {/* Animated Background Orbs */}
+        <div className="absolute top-0 right-0 -mr-20 -mt-20 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl group-hover:bg-blue-600/20 transition-colors duration-1000"></div>
+        <div className="absolute bottom-0 right-40 -mb-20 w-80 h-80 bg-[#FFC700]/5 rounded-full blur-3xl group-hover:bg-[#FFC700]/10 transition-colors duration-1000 delay-300"></div>
+        
+        {/* Subtle Grid Pattern overlay */}
+        <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:40px_40px] opacity-20"></div>
+
+        <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-8">
+          <div>
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-bold tracking-wide uppercase mb-4">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
+              </span>
+              System Online
+            </div>
+            <h1 className="text-2xl md:text-4xl font-black text-white mb-2 tracking-tight">
+              Welcome to <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-blue-100">Zilogicx Admin</span>
+            </h1>
+            <p className="text-slate-400 font-medium text-sm md:text-base max-w-xl leading-relaxed">
+              Monitor your logistics ecosystem, manage retail partner onboarding requests, and review general inquiries from a single command center.
+            </p>
+          </div>
+          
+          <div className="hidden lg:block relative z-10">
+            <div className="w-24 h-24 bg-gradient-to-tr from-blue-600/10 to-[#FFC700]/10 rounded-2xl border border-white/5 flex items-center justify-center backdrop-blur-md transform rotate-12 group-hover:rotate-6 transition-transform duration-500 shadow-xl">
+               <TrendingUp className="w-12 h-12 text-blue-500/50" />
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Main Stats Cards */}

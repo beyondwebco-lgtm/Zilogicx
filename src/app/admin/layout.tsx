@@ -1,39 +1,69 @@
 'use client';
 
-import React from 'react';
+import React, { Suspense } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
 import { 
   LayoutDashboard, 
   Inbox, 
   Users, 
-  Truck, 
-  CircleDollarSign, 
-  ShieldAlert, 
-  Headphones, 
-  MapPin,
+  Truck,
+  FileCode2,
+  ChevronRight,
   LogOut,
-  ChevronRight
+  ShieldAlert,
+  FileText
 } from 'lucide-react';
 import { Logo } from '@/components/Logo';
 import { createClient } from '@/utils/supabase/client';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname, useSearchParams } from 'next/navigation';
+import { useState, useEffect } from 'react';
 
-const sidebarLinks = [
-  { href: '/admin', label: 'Dashboard Overview', icon: <LayoutDashboard className="w-5 h-5" /> },
-  { href: '/admin/inquiries', label: 'Inquiries', icon: <Inbox className="w-5 h-5" /> },
-  { href: '/admin/partners', label: 'Partner Approvals', icon: <Users className="w-5 h-5" /> },
-  { href: '/admin/delivery', label: 'Delivery Partners', icon: <Truck className="w-5 h-5" /> },
-  { href: '/admin/finance', label: 'Finance & Settlement', icon: <CircleDollarSign className="w-5 h-5" /> },
-  { href: '/admin/security', label: 'Security & Audit Logs', icon: <ShieldAlert className="w-5 h-5" /> },
-  { href: '/admin/support', label: 'Customer Support', icon: <Headphones className="w-5 h-5" /> },
-  { href: '/admin/tracking', label: 'Live Tracking', icon: <MapPin className="w-5 h-5" /> },
-];
 
-export default function AdminLayout({ children }: { children: React.ReactNode }) {
+
+function AdminLayoutInner({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const router = useRouter();
   const supabase = createClient();
+
+  const [categories, setCategories] = useState<string[]>(['general', 'demo', 'security', 'd2c', 'retail']);
+
+  useEffect(() => {
+    async function fetchCategories() {
+      const { data } = await supabase.from('form_configs').select('category');
+      if (data) {
+        const dynamicCats = data.map(d => d.category);
+        setCategories(prev => Array.from(new Set([...prev, ...dynamicCats])));
+      }
+    }
+    fetchCategories();
+  }, []);
+
+  const getLabel = (cat: string) => {
+    const labels: Record<string, string> = {
+      general: 'General Inquiries',
+      demo: 'Demo Requests',
+      security: 'Security Issues',
+      d2c: 'D2C / E-commerce',
+      retail: 'Retail Inquiries'
+    };
+    if (labels[cat]) return labels[cat];
+    return cat.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+  };
+
+  const sidebarLinks = [
+    { href: '/admin', label: 'Dashboard', icon: <LayoutDashboard className="w-5 h-5" /> },
+    { href: '/admin/inquiries', label: 'All Inquiries', icon: <Inbox className="w-5 h-5" /> },
+    ...categories.filter(c => c !== 'partner').map(cat => ({
+      href: `/admin/inquiries?type=${cat}`,
+      label: getLabel(cat),
+      icon: <Inbox className="w-4 h-4 ml-2 opacity-70" />
+    })),
+    { href: '/admin/partners', label: 'Partner Approvals', icon: <Users className="w-5 h-5" /> },
+    { href: '/admin/forms', label: 'Form Builder', icon: <FileCode2 className="w-5 h-5" /> },
+    { href: '/admin/tracking', label: 'Live Tracking', icon: <Truck className="w-5 h-5" /> },
+    { href: '/admin/legal', label: 'Legal Pages', icon: <FileText className="w-5 h-5" /> },
+  ];
 
   // If we are on the login page, don't show the sidebar layout
   if (pathname === '/admin/login') {
@@ -51,9 +81,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       {/* Sidebar */}
       <aside className="w-72 bg-[#050A15] border-r border-slate-800 flex flex-col hidden md:flex shrink-0 shadow-2xl z-10">
         <div className="p-6 border-b border-slate-800">
-          <Link href="/">
-            <Logo />
-          </Link>
+          <Logo />
           <div className="mt-2 text-xs font-bold text-slate-500 uppercase tracking-widest font-mono">
             Admin Portal
           </div>
@@ -61,7 +89,20 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
         <nav className="flex-1 p-4 space-y-1.5 overflow-y-auto overflow-x-hidden custom-scrollbar">
           {sidebarLinks.map((link) => {
-            const isActive = pathname === link.href || (link.href !== '/admin' && pathname.startsWith(link.href));
+            let isActive = false;
+            
+            if (link.href === '/admin') {
+              isActive = pathname === '/admin';
+            } else if (link.href.includes('?')) {
+              // It's a query param link
+              const [linkPath, query] = link.href.split('?');
+              const urlParams = new URLSearchParams(query);
+              const type = urlParams.get('type');
+              isActive = pathname === linkPath && searchParams.get('type') === type;
+            } else {
+              isActive = pathname.startsWith(link.href);
+            }
+
             return (
               <Link
                 key={link.href}
@@ -124,5 +165,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </div>
       </main>
     </div>
+  );
+}
+
+export default function AdminLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-[#0B152A] flex items-center justify-center text-white">Loading Admin...</div>}>
+      <AdminLayoutInner>{children}</AdminLayoutInner>
+    </Suspense>
   );
 }

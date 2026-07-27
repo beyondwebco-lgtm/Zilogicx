@@ -13,7 +13,9 @@ import {
   Zap, 
   ArrowRight,
   CheckCircle2,
-  Shield
+  Shield,
+  ShoppingCart,
+  Store
 } from 'lucide-react';
 
 const TwitterXIcon = () => (
@@ -50,20 +52,38 @@ const FacebookIcon = () => (
 
 import { HeaderNav } from '@/components/HeaderNav';
 import { createClient } from '@/utils/supabase/client';
+import { DynamicFields } from '@/components/DynamicFields';
 
 function ContactContent() {
   const searchParams = useSearchParams();
-  const [activeTab, setActiveTab] = useState<'general' | 'partner' | 'demo' | 'security'>('general');
+  const [activeTab, setActiveTab] = useState<string>('general');
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  
+  const [allConfigs, setAllConfigs] = useState<{category: string, config: any[]}[]>([]);
+  const customFields = allConfigs.find(c => c.category === activeTab)?.config || [];
 
   useEffect(() => {
     const tabParam = searchParams.get('tab');
-    if (tabParam === 'general' || tabParam === 'partner' || tabParam === 'demo' || tabParam === 'security') {
-      setActiveTab(tabParam as 'general' | 'partner' | 'demo' | 'security');
+    if (tabParam) {
+      setActiveTab(tabParam);
     }
   }, [searchParams]);
+
+  useEffect(() => {
+    async function loadConfigs() {
+      const supabase = createClient();
+      const { data } = await supabase
+        .from('form_configs')
+        .select('category, config')
+        .order('created_at', { ascending: true });
+      if (data) {
+        setAllConfigs(data);
+      }
+    }
+    loadConfigs();
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -75,6 +95,13 @@ function ContactContent() {
     const supabase = createClient();
 
     try {
+      const custom_fields: Record<string, string> = {};
+      for (const [key, value] of formData.entries()) {
+        if (key.startsWith('custom_')) {
+          custom_fields[key] = value as string;
+        }
+      }
+
       if (activeTab === 'partner') {
         const { error } = await supabase.from('partner_applications').insert({
           business_name: formData.get('businessName') as string,
@@ -104,6 +131,7 @@ function ContactContent() {
           preferred_date: formData.get('preferredDate') ? (formData.get('preferredDate') as string) : null,
           preferred_time: (formData.get('preferredTime') as string) || null,
           message: (formData.get('message') as string) || (activeTab === 'demo' ? 'Requested Demo' : ''),
+          custom_fields: custom_fields,
         });
 
         if (error) throw error;
@@ -250,28 +278,41 @@ function ContactContent() {
               
               {/* Tab Navigation Header */}
               <div className="flex flex-wrap border-b border-slate-200 bg-slate-50/50">
-                {[
-                  { id: 'general', label: 'General', icon: <Mail className="w-4 h-4" /> },
-                  { id: 'partner', label: 'Partner', icon: <Users className="w-4 h-4" /> },
-                  { id: 'demo', label: 'Demo', icon: <Zap className="w-4 h-4" /> },
-                  { id: 'security', label: 'Security', icon: <Shield className="w-4 h-4" /> },
-                ].map((t) => {
-                  const isActive = activeTab === t.id;
-                  return (
-                    <button
-                      key={t.id}
-                      onClick={() => setActiveTab(t.id as 'general' | 'partner' | 'demo' | 'security')}
-                      className={`flex-1 flex items-center justify-center gap-2 py-4 px-3 text-xs sm:text-sm font-extrabold transition-all relative ${
-                        isActive
-                          ? 'bg-white text-slate-900 border-t-2 border-t-[#FFC700]'
-                          : 'text-slate-500 hover:text-slate-800 hover:bg-slate-100/50'
-                      }`}
-                    >
-                      <span className={isActive ? 'text-[#D9A300]' : 'text-slate-400'}>{t.icon}</span>
-                      <span>{t.label}</span>
-                    </button>
-                  );
-                })}
+                {(() => {
+                  const coreTabs = [
+                    { id: 'general', label: 'General', icon: <Mail className="w-4 h-4" /> },
+                    { id: 'partner', label: 'Partner', icon: <Users className="w-4 h-4" /> },
+                    { id: 'demo', label: 'Demo', icon: <Zap className="w-4 h-4" /> },
+                    { id: 'security', label: 'Security', icon: <Shield className="w-4 h-4" /> },
+                    { id: 'd2c', label: 'D2C / E-commerce', icon: <ShoppingCart className="w-4 h-4" /> },
+                    { id: 'retail', label: 'Retail', icon: <Store className="w-4 h-4" /> },
+                  ];
+                  const dynamicTabs = allConfigs
+                    .filter(c => !coreTabs.find(t => t.id === c.category))
+                    .map(c => ({
+                      id: c.category,
+                      label: c.category.replace(/_/g, ' '),
+                      icon: <Mail className="w-4 h-4" />
+                    }));
+                  
+                  return [...coreTabs, ...dynamicTabs].map((t) => {
+                    const isActive = activeTab === t.id;
+                    return (
+                      <button
+                        key={t.id}
+                        onClick={() => setActiveTab(t.id)}
+                        className={`flex-1 flex items-center justify-center gap-2 py-4 px-3 text-xs sm:text-sm font-extrabold transition-all relative capitalize ${
+                          isActive
+                            ? 'bg-white text-slate-900 border-t-2 border-t-[#FFC700]'
+                            : 'text-slate-500 hover:text-slate-800 hover:bg-slate-100/50'
+                        }`}
+                      >
+                        <span className={isActive ? 'text-[#D9A300]' : 'text-slate-400'}>{t.icon}</span>
+                        <span className="hidden sm:inline">{t.label}</span>
+                      </button>
+                    );
+                  });
+                })()}
               </div>
 
               {/* Form Content */}
@@ -385,6 +426,9 @@ function ContactContent() {
                         />
                       </div>
 
+                      <div className="pt-4 pb-2">
+                        <DynamicFields fields={customFields} />
+                      </div>
                       <button 
                         type="submit" 
                         disabled={submitting}
@@ -520,6 +564,9 @@ function ContactContent() {
                         />
                       </div>
 
+                      <div className="pt-4 pb-2">
+                        <DynamicFields fields={customFields} />
+                      </div>
                       <button 
                         type="submit" 
                         disabled={submitting}
@@ -631,6 +678,9 @@ function ContactContent() {
                         </div>
                       </div>
 
+                      <div className="pt-4 pb-2">
+                        <DynamicFields fields={customFields} />
+                      </div>
                       <button 
                         type="submit" 
                         disabled={submitting}
@@ -700,6 +750,9 @@ function ContactContent() {
                         />
                       </div>
 
+                      <div className="pt-4 pb-2">
+                        <DynamicFields fields={customFields} />
+                      </div>
                       <button 
                         type="submit" 
                         disabled={submitting}
@@ -710,9 +763,242 @@ function ContactContent() {
                     </>
                   )}
 
+                  {/* TAB 5: D2C INQUIRY */}
+                  {activeTab === 'd2c' && (
+                    <>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                        <div>
+                          <label className="block text-xs font-extrabold text-slate-700 mb-1.5">Full Name *</label>
+                          <input 
+                            required 
+                            name="fullName"
+                            type="text" 
+                            placeholder="Your Name" 
+                            className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-400/20 text-slate-900 font-medium"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-extrabold text-slate-700 mb-1.5">Email Address *</label>
+                          <input 
+                            required 
+                            name="email"
+                            type="email" 
+                            placeholder="you@brand.com" 
+                            className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-400/20 text-slate-900 font-medium"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                        <div>
+                          <label className="block text-xs font-extrabold text-slate-700 mb-1.5">Phone Number</label>
+                          <input 
+                            name="phone"
+                            type="tel" 
+                            placeholder="+91 98765 43210" 
+                            className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-400/20 text-slate-900 font-medium"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-extrabold text-slate-700 mb-1.5">Company Name</label>
+                          <input 
+                            name="companyName"
+                            type="text" 
+                            placeholder="Your Brand Pvt. Ltd." 
+                            className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-400/20 text-slate-900 font-medium"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                        <div>
+                          <label className="block text-xs font-extrabold text-slate-700 mb-1.5">Industry</label>
+                          <select name="industry" className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-400/20 text-slate-900 font-medium bg-white">
+                            <option value="">Select industry</option>
+                            <option value="Fashion">Fashion & Lifestyle</option>
+                            <option value="Electronics">Electronics & Gadgets</option>
+                            <option value="Beauty">Beauty & Personal Care</option>
+                            <option value="FMCG">FMCG & Grocery</option>
+                            <option value="Other">Other</option>
+                          </select>
+                        </div>
+                        <div>
+                          <label className="block text-xs font-extrabold text-slate-700 mb-1.5">Monthly Shipment Volume</label>
+                          <select name="monthlyVolume" className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-400/20 text-slate-900 font-medium bg-white">
+                            <option value="">Select volume</option>
+                            <option value="1-500">1 - 500 shipments/month</option>
+                            <option value="500-2000">500 - 2,000 shipments/month</option>
+                            <option value="2000-10000">2,000 - 10,000 shipments/month</option>
+                            <option value="10000+">10,000+ shipments/month</option>
+                          </select>
+                        </div>
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-extrabold text-slate-700 mb-1.5">Message *</label>
+                        <textarea 
+                          required 
+                          name="message"
+                          rows={4} 
+                          placeholder="Tell us about your D2C logistics needs..." 
+                          className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-400/20 text-slate-900 font-medium resize-none"
+                        />
+                      </div>
+
+                      <div className="pt-4 pb-2">
+                        <DynamicFields fields={customFields} />
+                      </div>
+                      <button 
+                        type="submit" 
+                        disabled={submitting}
+                        className="w-full flex items-center justify-center gap-2 rounded-xl bg-[#FFC700] hover:bg-[#e5b300] py-4 text-base font-extrabold text-black transition-all shadow-lg shadow-yellow-500/20 active:scale-[0.99] disabled:opacity-60 disabled:cursor-not-allowed"
+                      >
+                        {submitting ? 'Sending...' : 'Send Inquiry'} <ArrowRight className="w-5 h-5 stroke-[2.5]" />
+                      </button>
+                    </>
+                  )}
+
+                  {/* TAB 6: RETAIL INQUIRY */}
+                  {activeTab === 'retail' && (
+                    <>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                        <div>
+                          <label className="block text-xs font-extrabold text-slate-700 mb-1.5">Full Name *</label>
+                          <input 
+                            required 
+                            name="fullName"
+                            type="text" 
+                            placeholder="Your Name" 
+                            className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-400/20 text-slate-900 font-medium"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-extrabold text-slate-700 mb-1.5">Email Address *</label>
+                          <input 
+                            required 
+                            name="email"
+                            type="email" 
+                            placeholder="you@retailer.com" 
+                            className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-400/20 text-slate-900 font-medium"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                        <div>
+                          <label className="block text-xs font-extrabold text-slate-700 mb-1.5">Phone Number</label>
+                          <input 
+                            name="phone"
+                            type="tel" 
+                            placeholder="+91 98765 43210" 
+                            className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-400/20 text-slate-900 font-medium"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-extrabold text-slate-700 mb-1.5">Store / Retailer Name</label>
+                          <input 
+                            name="companyName"
+                            type="text" 
+                            placeholder="Your Store Name" 
+                            className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-400/20 text-slate-900 font-medium"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                        <div>
+                          <label className="block text-xs font-extrabold text-slate-700 mb-1.5">Industry</label>
+                          <select name="industry" className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-400/20 text-slate-900 font-medium bg-white">
+                            <option value="">Select industry</option>
+                            <option value="Fashion">Fashion & Lifestyle</option>
+                            <option value="Electronics">Electronics & Gadgets</option>
+                            <option value="Beauty">Beauty & Personal Care</option>
+                            <option value="FMCG">FMCG & Grocery</option>
+                            <option value="Other">Other</option>
+                          </select>
+                        </div>
+                        <div>
+                          <label className="block text-xs font-extrabold text-slate-700 mb-1.5">Monthly Shipment Volume</label>
+                          <select name="monthlyVolume" className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-400/20 text-slate-900 font-medium bg-white">
+                            <option value="">Select volume</option>
+                            <option value="1-500">1 - 500 shipments/month</option>
+                            <option value="500-2000">500 - 2,000 shipments/month</option>
+                            <option value="2000-10000">2,000 - 10,000 shipments/month</option>
+                            <option value="10000+">10,000+ shipments/month</option>
+                          </select>
+                        </div>
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-extrabold text-slate-700 mb-1.5">Message *</label>
+                        <textarea 
+                          required 
+                          name="message"
+                          rows={4} 
+                          placeholder="Tell us about your retail logistics needs..." 
+                          className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-400/20 text-slate-900 font-medium resize-none"
+                        />
+                      </div>
+
+                      <div className="pt-4 pb-2">
+                        <DynamicFields fields={customFields} />
+                      </div>
+                      <button 
+                        type="submit" 
+                        disabled={submitting}
+                        className="w-full flex items-center justify-center gap-2 rounded-xl bg-[#FFC700] hover:bg-[#e5b300] py-4 text-base font-extrabold text-black transition-all shadow-lg shadow-yellow-500/20 active:scale-[0.99] disabled:opacity-60 disabled:cursor-not-allowed"
+                      >
+                        {submitting ? 'Sending...' : 'Send Inquiry'} <ArrowRight className="w-5 h-5 stroke-[2.5]" />
+                      </button>
+                    </>
+                  )}
+
                 </form>
 
               </div>
+
+              {/* Dynamic Fallback Form for New Categories */}
+              {!['general', 'partner', 'demo', 'security', 'd2c', 'retail'].includes(activeTab) && (
+                <div className="p-8 md:p-12 animate-in fade-in slide-in-from-right-4 duration-500">
+                  <div className="max-w-2xl">
+                    <h2 className="text-3xl font-black text-slate-900 mb-2 capitalize">{activeTab.replace(/_/g, ' ')} Inquiry</h2>
+                    <p className="text-sm font-bold text-slate-500 mb-8">
+                      Please fill out the form below to submit your {activeTab.replace(/_/g, ' ')} request.
+                    </p>
+
+                    <form onSubmit={handleSubmit} className="space-y-5">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <div className="space-y-1.5">
+                          <label className="block text-xs font-extrabold text-slate-700">Full Name *</label>
+                          <input required name="fullName" type="text" placeholder="John Doe" className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-400/20 text-slate-900 font-medium" />
+                        </div>
+                        <div className="space-y-1.5">
+                          <label className="block text-xs font-extrabold text-slate-700">Email Address *</label>
+                          <input required name="email" type="email" placeholder="john@example.com" className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-400/20 text-slate-900 font-medium" />
+                        </div>
+                      </div>
+
+                      <div className="pt-4 pb-2">
+                        <DynamicFields fields={customFields} />
+                      </div>
+                      <button type="submit" disabled={submitting} className="w-full flex items-center justify-center gap-2 rounded-xl bg-[#FFC700] hover:bg-[#e5b300] py-4 text-base font-extrabold text-black transition-all shadow-lg shadow-yellow-500/20 active:scale-[0.99] disabled:opacity-60 disabled:cursor-not-allowed">
+                        {submitting ? 'Submitting...' : 'Submit Inquiry'}
+                      </button>
+
+                      {submitError && (
+                        <div className="p-4 bg-red-50 border border-red-200 text-red-600 text-sm font-bold rounded-xl text-center">
+                          {submitError}
+                        </div>
+                      )}
+                      {submitted && (
+                        <div className="p-4 bg-green-50 border border-green-200 text-green-700 text-sm font-bold rounded-xl text-center flex items-center justify-center gap-2">
+                          <CheckCircle2 className="w-5 h-5" /> Successfully submitted! We will be in touch shortly.
+                        </div>
+                      )}
+                    </form>
+                  </div>
+                </div>
+              )}
 
             </div>
 
@@ -738,13 +1024,11 @@ function ContactContent() {
               </div>
               <div className="flex items-center gap-2 pt-2">
                 {[
-                  { icon: <LinkedinIcon />, label: 'LinkedIn' },
-                  { icon: <TwitterXIcon />, label: 'X' },
-                  { icon: <InstagramIcon />, label: 'Instagram' },
-                  { icon: <FacebookIcon />, label: 'Facebook' },
-                  { icon: <YoutubeIcon />, label: 'YouTube' },
+                  { icon: <LinkedinIcon />, label: 'LinkedIn', href: 'https://www.linkedin.com/company/135278550/admin/dashboard/' },
+                  { icon: <InstagramIcon />, label: 'Instagram', href: 'https://www.instagram.com/zilogicx_official?igsh=MTFiY2VheTJrZGRnMA==' },
+                  { icon: <YoutubeIcon />, label: 'YouTube', href: 'https://youtube.com/@zilogicx?si=KLGr5ywbtZfcpmT6' },
                 ].map((s, idx) => (
-                  <a key={idx} href="/" className="p-2 rounded-lg bg-slate-900 border border-slate-800 text-slate-400 hover:text-[#FFC700] hover:border-yellow-500/30 transition-colors">
+                  <a key={idx} href={s.href} target="_blank" rel="noopener noreferrer" className="p-2 rounded-lg bg-slate-900 border border-slate-800 text-slate-400 hover:text-[#FFC700] hover:border-yellow-500/30 transition-colors">
                     {s.icon}
                   </a>
                 ))}
@@ -789,7 +1073,7 @@ function ContactContent() {
               <h4 className="text-xs font-extrabold text-[#FFC700] uppercase tracking-wider mb-4 font-mono">LEGAL</h4>
               <ul className="space-y-2.5 text-xs text-slate-300">
                 <li><a href="/contact" className="hover:text-white transition-colors">Privacy Policy</a></li>
-                <li><a href="/contact" className="hover:text-white transition-colors">Terms & Conditions</a></li>
+                <li><a href="/terms" className="hover:text-white transition-colors">Terms & Conditions</a></li>
                 <li><a href="/partners" className="hover:text-white transition-colors">Partner Program</a></li>
                 <li><a href="/contact" className="hover:text-white transition-colors">Contact Sales</a></li>
               </ul>
