@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { createClient } from '@/utils/supabase/client';
-import { Users, ExternalLink, Calendar, CheckCircle2, Search, XCircle } from 'lucide-react';
+import { Users, ExternalLink, Calendar, CheckCircle2, Search, XCircle, Trash2 } from 'lucide-react';
 
 type Partner = {
   id: string;
@@ -56,6 +56,22 @@ export default function AdminPartnersPage() {
     setPartners(partners.map(p => 
       p.id === id ? { ...p, status: newStatus } : p
     ));
+  }
+
+  async function deletePartner(id: string) {
+    if (!confirm('Are you sure you want to delete this partner application? This action cannot be undone.')) return;
+
+    const { error } = await supabase
+      .from('partner_applications')
+      .delete()
+      .eq('id', id);
+    
+    if (!error) {
+      setPartners(partners.filter(p => p.id !== id));
+    } else {
+      alert('Failed to delete partner application.');
+      console.error(error);
+    }
   }
 
   const filteredPartners = partners.filter(p => 
@@ -152,26 +168,33 @@ export default function AdminPartnersPage() {
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                      {partner.status === 'pending' ? (
-                        <div className="flex items-center justify-end gap-3">
-                          <button
-                            onClick={() => updateStatus(partner.id, 'approved')}
-                            className="p-2 rounded-xl bg-green-500/10 text-green-500 hover:bg-green-500/20 hover:scale-105 transition-all border border-green-500/20"
-                            title="Approve Partner"
-                          >
-                            <CheckCircle2 className="w-5 h-5" />
-                          </button>
-                          <button
-                            onClick={() => updateStatus(partner.id, 'rejected')}
-                            className="p-2 rounded-xl bg-red-500/10 text-red-500 hover:bg-red-500/20 hover:scale-105 transition-all border border-red-500/20"
-                            title="Reject Partner"
-                          >
-                            <XCircle className="w-5 h-5" />
-                          </button>
-                        </div>
-                      ) : (
-                        <span className="text-slate-500 text-xs font-bold uppercase tracking-wider">Reviewed</span>
-                      )}
+                      <div className="flex items-center justify-end gap-3">
+                        {partner.status === 'pending' && (
+                          <>
+                            <button
+                              onClick={() => updateStatus(partner.id, 'approved')}
+                              className="p-2 rounded-xl bg-green-500/10 text-green-500 hover:bg-green-500/20 hover:scale-105 transition-all border border-green-500/20"
+                              title="Approve Partner"
+                            >
+                              <CheckCircle2 className="w-5 h-5" />
+                            </button>
+                            <button
+                              onClick={() => updateStatus(partner.id, 'rejected')}
+                              className="p-2 rounded-xl bg-yellow-500/10 text-yellow-500 hover:bg-yellow-500/20 hover:scale-105 transition-all border border-yellow-500/20"
+                              title="Reject Partner"
+                            >
+                              <XCircle className="w-5 h-5" />
+                            </button>
+                          </>
+                        )}
+                        <button
+                          onClick={() => deletePartner(partner.id)}
+                          className="p-2 rounded-xl bg-red-500/10 text-red-500 hover:bg-red-500/20 hover:scale-105 transition-all border border-red-500/20"
+                          title="Delete Partner Application"
+                        >
+                          <Trash2 className="w-5 h-5" />
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}

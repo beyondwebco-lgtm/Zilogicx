@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState, Suspense } from 'react';
 import { createClient } from '@/utils/supabase/client';
-import { Inbox, Calendar, CheckCircle2, Search, X, Save, Edit3 } from 'lucide-react';
+import { Inbox, Calendar, CheckCircle2, Search, X, Save, Edit3, Trash2 } from 'lucide-react';
 import { useSearchParams } from 'next/navigation';
 
 type Inquiry = {
@@ -90,6 +90,28 @@ function InquiriesContent() {
     ));
     if (selectedInquiry?.id === id) {
       setSelectedInquiry({ ...selectedInquiry, status: 'resolved' });
+    }
+  }
+
+  async function deleteInquiry(id: string, e?: React.MouseEvent) {
+    if (e) e.stopPropagation();
+    if (!confirm('Are you sure you want to delete this inquiry? This action cannot be undone.')) {
+      return;
+    }
+
+    const { error } = await supabase
+      .from('inquiries')
+      .delete()
+      .eq('id', id);
+
+    if (!error) {
+      setInquiries(inquiries.filter(inq => inq.id !== id));
+      if (selectedInquiry?.id === id) {
+        setSelectedInquiry(null);
+      }
+    } else {
+      alert('Failed to delete inquiry.');
+      console.error(error);
     }
   }
 
@@ -230,6 +252,13 @@ function InquiriesContent() {
                             <CheckCircle2 className="w-5 h-5" />
                           </button>
                         )}
+                        <button
+                          onClick={(e) => deleteInquiry(inquiry.id, e)}
+                          className="text-red-500/70 hover:text-red-400 transition-colors"
+                          title="Delete Inquiry"
+                        >
+                          <Trash2 className="w-5 h-5" />
+                        </button>
                       </div>
                     </td>
                   </tr>
@@ -323,11 +352,18 @@ function InquiriesContent() {
 
             </div>
 
-            <div className="p-6 border-t border-slate-800 bg-[#050A15]">
+            <div className="p-6 border-t border-slate-800 bg-[#050A15] flex items-center gap-3">
+              <button 
+                onClick={(e) => deleteInquiry(selectedInquiry.id, e)}
+                className="flex items-center justify-center p-3.5 bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 rounded-xl transition-all"
+                title="Delete Inquiry"
+              >
+                <Trash2 className="w-5 h-5" />
+              </button>
               <button 
                 onClick={saveInquiryDetails}
                 disabled={saving}
-                className="w-full flex items-center justify-center gap-2 bg-[#FFC700] hover:bg-[#e5b300] text-black font-extrabold py-3.5 rounded-xl transition-all disabled:opacity-50"
+                className="flex-1 flex items-center justify-center gap-2 bg-[#FFC700] hover:bg-[#e5b300] text-black font-extrabold py-3.5 rounded-xl transition-all disabled:opacity-50"
               >
                 <Save className="w-5 h-5" />
                 {saving ? 'Saving...' : 'Save Changes'}
