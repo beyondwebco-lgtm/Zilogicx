@@ -60,6 +60,11 @@ function ContactContent() {
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [emailGeneral, setEmailGeneral] = useState('hello@zilogicx.com');
+  const [emailSales, setEmailSales] = useState('sales@zilogicx.com');
+  const [phone, setPhone] = useState('+91 98765 43210');
+  const [address, setAddress] = useState('ZILOGICX Technologies Pvt. Ltd., Bengaluru, Karnataka, India');
+  const [hours, setHours] = useState('Monday – Saturday, 9:00 AM – 7:00 PM IST');
   
   const [allConfigs, setAllConfigs] = useState<{category: string, config: any[]}[]>([]);
   const customFields = allConfigs.find(c => c.category === activeTab)?.config || [];
@@ -82,7 +87,35 @@ function ContactContent() {
         setAllConfigs(data);
       }
     }
+    async function loadContactInfo() {
+      const supabase = createClient();
+      const keys = ['company_email_general', 'company_email_sales', 'company_phone', 'company_address', 'company_hours'];
+      const { data } = await supabase
+        .from('site_content')
+        .select('key, content')
+        .in('key', keys);
+      
+      if (data) {
+        const findContent = (k: string) => data.find(item => item.key === k)?.content;
+        
+        const gEmail = findContent('company_email_general');
+        if (gEmail) setEmailGeneral(gEmail);
+
+        const sEmail = findContent('company_email_sales');
+        if (sEmail) setEmailSales(sEmail);
+
+        const ph = findContent('company_phone');
+        if (ph) setPhone(ph);
+
+        const addr = findContent('company_address');
+        if (addr) setAddress(addr);
+
+        const hrs = findContent('company_hours');
+        if (hrs) setHours(hrs);
+      }
+    }
     loadConfigs();
+    loadContactInfo();
   }, []);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -192,8 +225,8 @@ function ContactContent() {
                 </div>
                 <div>
                   <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider block font-mono">GENERAL</span>
-                  <a href="mailto:hello@zilogicx.com" className="text-sm font-extrabold text-slate-900 hover:text-blue-600 transition-colors">
-                    hello@zilogicx.com
+                  <a href={`mailto:${emailGeneral}`} className="text-sm font-extrabold text-slate-900 hover:text-blue-600 transition-colors">
+                    {emailGeneral}
                   </a>
                 </div>
               </div>
@@ -205,8 +238,8 @@ function ContactContent() {
                 </div>
                 <div>
                   <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider block font-mono">SALES</span>
-                  <a href="mailto:sales@zilogicx.com" className="text-sm font-extrabold text-slate-900 hover:text-blue-600 transition-colors">
-                    sales@zilogicx.com
+                  <a href={`mailto:${emailSales}`} className="text-sm font-extrabold text-slate-900 hover:text-blue-600 transition-colors">
+                    {emailSales}
                   </a>
                 </div>
               </div>
@@ -218,8 +251,8 @@ function ContactContent() {
                 </div>
                 <div>
                   <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider block font-mono">PHONE</span>
-                  <a href="tel:+919876543210" className="text-sm font-extrabold text-slate-900 hover:text-blue-600 transition-colors">
-                    +91 98765 43210
+                  <a href={`tel:${phone.replace(/\s+/g, '')}`} className="text-sm font-extrabold text-slate-900 hover:text-blue-600 transition-colors">
+                    {phone}
                   </a>
                 </div>
               </div>
@@ -231,8 +264,8 @@ function ContactContent() {
                 </div>
                 <div>
                   <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider block font-mono">ADDRESS</span>
-                  <p className="text-xs font-bold text-slate-800 leading-snug">
-                    ZILOGICX Technologies Pvt. Ltd., Bengaluru, Karnataka, India
+                  <p className="text-xs font-bold text-slate-800 leading-snug whitespace-pre-wrap">
+                    {address}
                   </p>
                 </div>
               </div>
@@ -245,7 +278,7 @@ function ContactContent() {
                 <div>
                   <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider block font-mono">HOURS</span>
                   <p className="text-xs font-bold text-slate-800 leading-snug">
-                    Monday – Saturday, 9:00 AM – 7:00 PM IST
+                    {hours}
                   </p>
                 </div>
               </div>
@@ -1072,8 +1105,8 @@ function ContactContent() {
             <div>
               <h4 className="text-xs font-extrabold text-[#FFC700] uppercase tracking-wider mb-4 font-mono">LEGAL</h4>
               <ul className="space-y-2.5 text-xs text-slate-300">
-                <li><a href="/contact" className="hover:text-white transition-colors">Privacy Policy</a></li>
                 <li><a href="/terms" className="hover:text-white transition-colors">Terms & Conditions</a></li>
+                <li><a href="/privacy" className="hover:text-white transition-colors">Privacy Policy</a></li>
                 <li><a href="/partners" className="hover:text-white transition-colors">Partner Program</a></li>
                 <li><a href="/contact" className="hover:text-white transition-colors">Contact Sales</a></li>
               </ul>

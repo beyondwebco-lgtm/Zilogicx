@@ -24,12 +24,12 @@ const InstagramIcon = () => (
   </svg>
 );
 
-export default async function TermsPage() {
+export default async function PrivacyPage() {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from('site_content')
     .select('content')
-    .eq('key', 'terms_and_conditions')
+    .eq('key', 'privacy_policy')
     .single();
   
   const content = data?.content || '';
@@ -44,9 +44,9 @@ export default async function TermsPage() {
             <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-blue-50 text-blue-600 mb-6">
               <ShieldCheck className="w-8 h-8" />
             </div>
-            <h1 className="text-4xl md:text-5xl font-black text-slate-900 mb-6 tracking-tight">Terms &amp; Conditions</h1>
+            <h1 className="text-4xl md:text-5xl font-black text-slate-900 mb-6 tracking-tight">Privacy Policy</h1>
             <p className="text-lg text-slate-500 max-w-2xl mx-auto font-medium">
-              Please read these terms and conditions carefully before using our services.
+              Please read our privacy policy carefully to understand how we handle your data.
             </p>
           </div>
 
@@ -61,7 +61,7 @@ export default async function TermsPage() {
               </div>
             ) : (
               <div className="text-center text-slate-500 py-12">
-                No terms and conditions have been published yet.
+                No privacy policy has been published yet.
               </div>
             )}
           </div>
@@ -133,8 +133,8 @@ export default async function TermsPage() {
             <div>
               <h4 className="text-xs font-extrabold text-[#FFC700] uppercase tracking-wider mb-4 font-mono">LEGAL</h4>
               <ul className="space-y-2.5 text-xs text-slate-300">
-                <li><a href="/terms" className="hover:text-white transition-colors text-[#FFC700]">Terms &amp; Conditions</a></li>
-                <li><a href="/privacy" className="hover:text-white transition-colors">Privacy Policy</a></li>
+                <li><a href="/terms" className="hover:text-white transition-colors">Terms &amp; Conditions</a></li>
+                <li><a href="/privacy" className="hover:text-white transition-colors text-[#FFC700]">Privacy Policy</a></li>
                 <li><a href="/contact" className="hover:text-white transition-colors">Partner Program</a></li>
                 <li><a href="/contact" className="hover:text-white transition-colors">Contact Sales</a></li>
               </ul>

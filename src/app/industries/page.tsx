@@ -556,8 +556,8 @@ export default function IndustriesPage() {
             <div>
               <h4 className="text-xs font-extrabold text-[#FFC700] uppercase tracking-wider mb-4 font-mono">LEGAL</h4>
               <ul className="space-y-2.5 text-xs text-slate-300">
-                <li><a href="/contact?tab=general" className="hover:text-white transition-colors">Privacy Policy</a></li>
                 <li><a href="/terms" className="hover:text-white transition-colors">Terms & Conditions</a></li>
+                <li><a href="/privacy" className="hover:text-white transition-colors">Privacy Policy</a></li>
                 <li><a href="/contact?tab=general" className="hover:text-white transition-colors">Partner Program</a></li>
                 <li><a href="/contact?tab=general" className="hover:text-white transition-colors">Contact Sales</a></li>
               </ul>
