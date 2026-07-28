@@ -125,6 +125,16 @@ function ContactContent() {
     setSubmitError(null);
 
     const formData = new FormData(form);
+
+    // Minimal check: verify phone number box before sending inquiry
+    const rawPhone = (formData.get('phone') as string || '').trim();
+    const digitsOnly = rawPhone.replace(/[^0-9]/g, '');
+    if (!rawPhone || digitsOnly.length < 10) {
+      setSubmitError('Please enter a valid phone number with at least 10 digits.');
+      setSubmitting(false);
+      return;
+    }
+
     const supabase = createClient();
 
     try {
@@ -395,10 +405,12 @@ function ContactContent() {
 
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                         <div>
-                          <label className="block text-xs font-extrabold text-slate-700 mb-1.5">Phone Number</label>
+                          <label className="block text-xs font-extrabold text-slate-700 mb-1.5">Phone Number *</label>
                           <input 
+                            required
                             name="phone"
                             type="tel" 
+                            minLength={10}
                             placeholder="+91 98765 43210" 
                             className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-400/20 text-slate-900 font-medium"
                           />
@@ -824,10 +836,12 @@ function ContactContent() {
 
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                         <div>
-                          <label className="block text-xs font-extrabold text-slate-700 mb-1.5">Phone Number</label>
+                          <label className="block text-xs font-extrabold text-slate-700 mb-1.5">Phone Number *</label>
                           <input 
+                            required
                             name="phone"
                             type="tel" 
+                            minLength={10}
                             placeholder="+91 98765 43210" 
                             className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-400/20 text-slate-900 font-medium"
                           />
@@ -919,10 +933,12 @@ function ContactContent() {
 
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                         <div>
-                          <label className="block text-xs font-extrabold text-slate-700 mb-1.5">Phone Number</label>
+                          <label className="block text-xs font-extrabold text-slate-700 mb-1.5">Phone Number *</label>
                           <input 
+                            required
                             name="phone"
                             type="tel" 
+                            minLength={10}
                             placeholder="+91 98765 43210" 
                             className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-400/20 text-slate-900 font-medium"
                           />
