@@ -16,7 +16,7 @@ export const Logo: React.FC<LogoProps> = ({ className = '', href = '/' }) => {
         alt="ZilogicX Logo" 
         width={180} 
         height={56} 
-        className="h-14 sm:h-16 w-auto object-contain scale-110 origin-left"
+        className="h-10 sm:h-12 md:h-14 w-auto object-contain scale-105 sm:scale-110 origin-left"
         priority
       />
     </Link>

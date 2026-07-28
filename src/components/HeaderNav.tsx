@@ -77,6 +77,7 @@ export const HeaderNav: React.FC<HeaderNavProps> = ({ activePage }) => {
                 <a
                   key={item.name}
                   href={item.href}
+                  onClick={() => setMobileMenuOpen(false)}
                   className={`px-4 py-2.5 text-sm font-bold rounded-xl transition-all ${
                     isActive
                       ? 'bg-slate-900 text-white font-extrabold shadow-md'
@@ -90,6 +91,7 @@ export const HeaderNav: React.FC<HeaderNavProps> = ({ activePage }) => {
           </div>
           <a 
             href="/contact?tab=general" 
+            onClick={() => setMobileMenuOpen(false)}
             className="block w-full text-center rounded-xl bg-[#FFC700] hover:bg-[#e5b300] py-3 text-sm font-extrabold text-slate-900 transition-all shadow-md"
           >
             Get Started
